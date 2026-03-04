@@ -1,7 +1,7 @@
 from flask import Flask, render_template, request, jsonify, send_file, session, redirect, url_for
 from werkzeug.security import generate_password_hash, check_password_hash
 from functools import wraps
-import json, os, io
+import json, os, sys, io
 from datetime import datetime
 from reportlab.lib.pagesizes import letter, landscape
 from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer, Table, TableStyle, PageBreak
@@ -11,8 +11,12 @@ from reportlab.lib.units import inch
 
 app = Flask(__name__)
 app.secret_key = 'asistencia_secret_2026_xK9#mP'
-DATA_FILE = 'data.json'
-USERS_FILE = 'users.json'
+
+# Use /data directory on Render (persistent disk), fallback to local for dev
+import sys
+_DATA_DIR = '/data' if os.path.isdir('/data') else '.'
+DATA_FILE  = os.path.join(_DATA_DIR, 'data.json')
+USERS_FILE = os.path.join(_DATA_DIR, 'users.json')
 
 # ── DATA ──────────────────────────────────────────────────────────────────────
 
@@ -43,8 +47,11 @@ def save_users(data):
     with open(USERS_FILE, 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, indent=2)
 
+_uid_counter = 0
 def uid():
-    return datetime.now().strftime('%f%S%M')
+    global _uid_counter
+    _uid_counter += 1
+    return datetime.now().strftime('%f%S%M') + str(_uid_counter)
 
 # ── AUTH HELPERS ──────────────────────────────────────────────────────────────
 
