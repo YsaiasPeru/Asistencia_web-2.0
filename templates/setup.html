@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Configuración Inicial — Sistema de Asistencia</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #eef2ff; --surface: #ffffff; --border: #dde3f0;
+    --text: #1a2035; --text2: #4a5568; --accent: #3b5bdb; --accent2: #4c6ef5;
+    --success: #0f9e6e; --success-bg: #e6faf4;
+    --error: #c53030; --error-bg: #fff5f5;
+    --shadow: 0 8px 40px rgba(59,91,219,.14);
+  }
+  [data-theme="dark"] {
+    --bg: #0e1117; --surface: #161b27; --border: #2d3748;
+    --text: #e8eaf0; --text2: #8892a4; --accent: #5c7cfa; --accent2: #748ffc;
+    --success: #38d9a9; --success-bg: #0d2b24;
+    --error: #fc8181; --error-bg: #2d1515;
+    --shadow: 0 8px 40px rgba(0,0,0,.4);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex; align-items: center; justify-content: center;
+    transition: background .3s;
+  }
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: radial-gradient(ellipse at 20% 50%, rgba(59,91,219,.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(92,124,250,.06) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .wrap { width: 460px; max-width: 95vw; position: relative; z-index: 1; }
+
+  /* Steps indicator */
+  .steps {
+    display: flex; align-items: center; justify-content: center;
+    gap: 0; margin-bottom: 28px;
+  }
+  .step {
+    display: flex; flex-direction: column; align-items: center; gap: 5px;
+    flex: 1;
+  }
+  .step-circle {
+    width: 36px; height: 36px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .85rem; font-weight: 700;
+    background: var(--border); color: var(--text2);
+    border: 2px solid var(--border);
+    transition: all .3s;
+  }
+  .step.active .step-circle {
+    background: var(--accent); color: white;
+    border-color: var(--accent);
+    box-shadow: 0 4px 14px rgba(59,91,219,.3);
+  }
+  .step.done .step-circle {
+    background: var(--success); color: white;
+    border-color: var(--success);
+  }
+  .step-label { font-size: .72rem; font-weight: 600; color: var(--text2); text-align: center; }
+  .step.active .step-label { color: var(--accent); }
+  .step.done .step-label { color: var(--success); }
+  .step-line {
+    height: 2px; flex: 1; max-width: 40px;
+    background: var(--border); border-radius: 2px;
+    margin-bottom: 20px; transition: background .3s;
+  }
+  .step-line.done { background: var(--success); }
+
+  /* Card */
+  .card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 20px; padding: 36px 36px 28px;
+    box-shadow: var(--shadow);
+  }
+
+  .card-icon {
+    width: 56px; height: 56px;
+    background: linear-gradient(135deg, #3b5bdb, #5c7cfa);
+    border-radius: 16px;
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 16px;
+    box-shadow: 0 6px 20px rgba(59,91,219,.28);
+    font-size: 1.5rem;
+  }
+  .card-title { font-size: 1.3rem; font-weight: 700; margin-bottom: 6px; letter-spacing: -.3px; }
+  .card-desc { font-size: .86rem; color: var(--text2); margin-bottom: 24px; line-height: 1.55; }
+
+  /* Alert box */
+  .alert {
+    border-radius: 11px; padding: 12px 16px;
+    font-size: .83rem; font-weight: 500;
+    display: flex; align-items: flex-start; gap: 9px;
+    margin-bottom: 18px;
+  }
+  .alert-info { background: rgba(59,91,219,.07); color: var(--accent); border: 1px solid rgba(59,91,219,.2); }
+  .alert-error { background: var(--error-bg); color: var(--error); border: 1px solid var(--error); display: none; }
+  .alert-error.show { display: flex; }
+  .alert-success { background: var(--success-bg); color: var(--success); border: 1px solid var(--success); display: none; }
+  .alert-success.show { display: flex; flex-direction: column; gap: 4px; }
+
+  /* Form */
+  .form-group { margin-bottom: 16px; }
+  .form-label {
+    display: block; font-size: .77rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .9px;
+    color: var(--text2); margin-bottom: 7px;
+  }
+  .input-wrap { position: relative; }
+  .form-input {
+    width: 100%; padding: 11px 14px 11px 42px;
+    border: 1.5px solid var(--border); border-radius: 11px;
+    background: var(--bg); color: var(--text);
+    font-family: 'Outfit', sans-serif; font-size: .95rem;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .form-input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(59,91,219,.12); }
+  .form-input.valid { border-color: var(--success); }
+  .form-input.invalid { border-color: var(--error); }
+  .input-icon { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); font-size: 1rem; pointer-events: none; opacity: .5; }
+  .toggle-pw { position: absolute; right: 13px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; font-size: .9rem; opacity: .5; transition: opacity .2s; }
+  .toggle-pw:hover { opacity: .9; }
+  .field-hint { font-size: .74rem; color: var(--text2); margin-top: 4px; }
+
+  /* Password strength */
+  .pw-strength { margin-top: 6px; display: none; }
+  .pw-strength.show { display: block; }
+  .pw-bar { height: 4px; border-radius: 4px; background: var(--border); overflow: hidden; margin-bottom: 3px; }
+  .pw-fill { height: 100%; border-radius: 4px; transition: width .3s, background .3s; width: 0; }
+  .pw-label { font-size: .72rem; font-weight: 600; }
+
+  /* Button */
+  .btn-main {
+    width: 100%; padding: 13px;
+    background: linear-gradient(135deg, #3b5bdb, #5c7cfa);
+    color: white; border: none; border-radius: 12px;
+    font-family: 'Outfit', sans-serif; font-size: 1rem; font-weight: 700;
+    cursor: pointer; transition: all .2s;
+    box-shadow: 0 4px 14px rgba(59,91,219,.3);
+    margin-top: 4px;
+  }
+  .btn-main:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(59,91,219,.38); }
+  .btn-main:disabled { opacity: .65; cursor: not-allowed; transform: none; }
+
+  .spinner { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(255,255,255,.3); border-top-color: white; border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: 6px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .theme-btn {
+    position: fixed; top: 18px; right: 20px;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 50px; padding: 6px 14px; cursor: pointer;
+    font-size: .8rem; font-family: 'Outfit', sans-serif; font-weight: 500;
+    color: var(--text2); display: flex; align-items: center; gap: 6px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.08); transition: all .2s; z-index: 10;
+  }
+  .theme-btn:hover { background: var(--border); }
+
+  .fade-in { animation: fadeIn .4s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+  .success-check {
+    width: 72px; height: 72px;
+    background: var(--success-bg); border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 2rem; margin: 0 auto 18px;
+    border: 3px solid var(--success);
+  }
+</style>
+</head>
+<body>
+
+<button class="theme-btn" onclick="toggleTheme()">
+  <span id="themeIcon">🌙</span>
+  <span id="themeLabel">Oscuro</span>
+</button>
+
+<div class="wrap fade-in">
+
+  <!-- Steps -->
+  <div class="steps">
+    <div class="step active" id="step1">
+      <div class="step-circle" id="sc1">1</div>
+      <div class="step-label">Tu cuenta</div>
+    </div>
+    <div class="step-line" id="line1"></div>
+    <div class="step" id="step2">
+      <div class="step-circle" id="sc2">2</div>
+      <div class="step-label">¡Listo!</div>
+    </div>
+  </div>
+
+  <!-- Card -->
+  <div class="card" id="mainCard">
+    <div class="card-icon">⚙️</div>
+    <div class="card-title">Configuración Inicial</div>
+    <div class="card-desc">
+      Bienvenido al <strong>Sistema de Asistencia y Notas</strong>.<br>
+      Crea tu cuenta de administrador para comenzar. Tendrás acceso completo al sistema.
+    </div>
+
+    <div class="alert alert-info">
+      <span>🔑</span>
+      <span>Esta cuenta tendrá <strong>todos los privilegios</strong>. Después podrás crear cuentas adicionales para otros profesores.</span>
+    </div>
+
+    <div class="alert alert-error" id="errorBox">
+      <span>⚠️</span>
+      <span id="errorMsg"></span>
+    </div>
+
+    <!-- Form -->
+    <div class="form-group">
+      <label class="form-label">Tu Nombre Completo</label>
+      <div class="input-wrap">
+        <span class="input-icon">👤</span>
+        <input type="text" class="form-input" id="fullName"
+               placeholder="Ej: Prof. Juan García"
+               oninput="validateName(this)">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Nombre de Usuario</label>
+      <div class="input-wrap">
+        <span class="input-icon">🆔</span>
+        <input type="text" class="form-input" id="username"
+               placeholder="Ej: admin o jgarcia"
+               oninput="validateUsername(this)"
+               autocomplete="username">
+      </div>
+      <div class="field-hint">Solo letras, números, puntos y guiones. Sin espacios.</div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Contraseña</label>
+      <div class="input-wrap">
+        <span class="input-icon">🔒</span>
+        <input type="password" class="form-input" id="password"
+               placeholder="Mínimo 4 caracteres"
+               oninput="checkStrength(this.value)"
+               autocomplete="new-password">
+        <button class="toggle-pw" onclick="togglePw('password','togglePw1')" id="togglePw1">👁️</button>
+      </div>
+      <div class="pw-strength" id="pwStrength">
+        <div class="pw-bar"><div class="pw-fill" id="pwFill"></div></div>
+        <div class="pw-label" id="pwLabel"></div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Confirmar Contraseña</label>
+      <div class="input-wrap">
+        <span class="input-icon">🔒</span>
+        <input type="password" class="form-input" id="password2"
+               placeholder="Repite tu contraseña"
+               oninput="validateConfirm()"
+               autocomplete="new-password">
+        <button class="toggle-pw" onclick="togglePw('password2','togglePw2')" id="togglePw2">👁️</button>
+      </div>
+    </div>
+
+    <button class="btn-main" id="mainBtn" onclick="doSetup()">
+      Crear Cuenta y Entrar →
+    </button>
+  </div>
+
+</div>
+
+<script>
+/* ── THEME ── */
+function toggleTheme(){
+  const html=document.documentElement, dark=html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme', dark?'light':'dark');
+  document.getElementById('themeIcon').textContent=dark?'🌙':'☀️';
+  document.getElementById('themeLabel').textContent=dark?'Oscuro':'Claro';
+  localStorage.setItem('theme', dark?'light':'dark');
+}
+(()=>{
+  const s=localStorage.getItem('theme')||'light';
+  document.documentElement.setAttribute('data-theme',s);
+  if(s==='dark'){document.getElementById('themeIcon').textContent='☀️';document.getElementById('themeLabel').textContent='Claro';}
+})();
+
+/* ── TOGGLE PASSWORD ── */
+const pwVisible = {};
+function togglePw(inputId, btnId){
+  pwVisible[inputId] = !pwVisible[inputId];
+  document.getElementById(inputId).type = pwVisible[inputId]?'text':'password';
+  document.getElementById(btnId).textContent = pwVisible[inputId]?'🙈':'👁️';
+}
+
+/* ── VALIDATORS ── */
+function validateName(el){
+  el.classList.toggle('valid', el.value.trim().length >= 2);
+  el.classList.toggle('invalid', el.value.trim().length > 0 && el.value.trim().length < 2);
+}
+
+function validateUsername(el){
+  const ok = /^[a-z0-9._-]+$/i.test(el.value) && el.value.length >= 2;
+  el.classList.toggle('valid', ok && el.value.length > 0);
+  el.classList.toggle('invalid', !ok && el.value.length > 0);
+  // Auto-lowercase
+  const pos = el.selectionStart;
+  el.value = el.value.toLowerCase().replace(/\s/g,'');
+  el.setSelectionRange(pos, pos);
+}
+
+function checkStrength(pw){
+  const el = document.getElementById('pwStrength');
+  const fill = document.getElementById('pwFill');
+  const lbl = document.getElementById('pwLabel');
+  if(!pw){ el.classList.remove('show'); return; }
+  el.classList.add('show');
+  let score = 0;
+  if(pw.length >= 4) score++;
+  if(pw.length >= 8) score++;
+  if(/[A-Z]/.test(pw) || /[0-9]/.test(pw)) score++;
+  if(/[^A-Za-z0-9]/.test(pw)) score++;
+  const levels = [
+    {w:'25%', bg:'#e53e3e', label:'Muy débil'},
+    {w:'50%', bg:'#dd6b20', label:'Débil'},
+    {w:'75%', bg:'#d69e2e', label:'Media'},
+    {w:'100%',bg:'#38a169', label:'Fuerte'},
+  ];
+  const lvl = levels[score-1] || levels[0];
+  fill.style.width = lvl.w;
+  fill.style.background = lvl.bg;
+  lbl.style.color = lvl.bg;
+  lbl.textContent = lvl.label;
+}
+
+function validateConfirm(){
+  const pw = document.getElementById('password').value;
+  const pw2 = document.getElementById('password2');
+  pw2.classList.toggle('valid', pw2.value === pw && pw.length > 0);
+  pw2.classList.toggle('invalid', pw2.value !== pw && pw2.value.length > 0);
+}
+
+/* ── SETUP ── */
+async function doSetup(){
+  const name     = document.getElementById('fullName').value.trim();
+  const username = document.getElementById('username').value.trim();
+  const password = document.getElementById('password').value;
+  const password2= document.getElementById('password2').value;
+  const btn      = document.getElementById('mainBtn');
+  const errBox   = document.getElementById('errorBox');
+
+  errBox.classList.remove('show');
+
+  // Validations
+  if(!name)     { showError('Ingresa tu nombre completo.'); return; }
+  if(!username) { showError('Ingresa un nombre de usuario.'); return; }
+  if(!/^[a-z0-9._-]+$/i.test(username)){ showError('El usuario solo puede tener letras, números, puntos o guiones.'); return; }
+  if(!password) { showError('Ingresa una contraseña.'); return; }
+  if(password.length < 4){ showError('La contraseña debe tener al menos 4 caracteres.'); return; }
+  if(password !== password2){ showError('Las contraseñas no coinciden.'); return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Creando cuenta...';
+
+  try {
+    const r = await fetch('/api/setup', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({name, username, password})
+    });
+    const data = await r.json();
+
+    if(r.ok){
+      // Show success step
+      document.getElementById('step1').classList.remove('active');
+      document.getElementById('step1').classList.add('done');
+      document.getElementById('sc1').textContent = '✓';
+      document.getElementById('line1').classList.add('done');
+      document.getElementById('step2').classList.add('done');
+      document.getElementById('sc2').textContent = '✓';
+
+      document.getElementById('mainCard').innerHTML = `
+        <div class="success-check">✅</div>
+        <div style="text-align:center;">
+          <div class="card-title" style="margin-bottom:10px;">¡Cuenta creada!</div>
+          <div style="color:var(--text2);font-size:.9rem;margin-bottom:22px;line-height:1.6;">
+            Bienvenido, <strong>${data.name}</strong>.<br>
+            Tu cuenta de administrador está lista.<br>
+            Ahora puedes comenzar a usar el sistema.
+          </div>
+          <div style="background:var(--success-bg);border:1px solid var(--success);border-radius:11px;padding:12px 16px;font-size:.82rem;color:var(--success);margin-bottom:22px;text-align:left;">
+            <strong>Usuario:</strong> ${username}<br>
+            <strong>Rol:</strong> Administrador (acceso completo)
+          </div>
+          <button class="btn-main" onclick="window.location.href='/'">
+            🚀 Ir al Sistema
+          </button>
+        </div>`;
+    } else {
+      showError(data.error || 'Error al crear la cuenta.');
+      btn.disabled = false;
+      btn.innerHTML = 'Crear Cuenta y Entrar →';
+    }
+  } catch(e) {
+    showError('Error de conexión. Intenta de nuevo.');
+    btn.disabled = false;
+    btn.innerHTML = 'Crear Cuenta y Entrar →';
+  }
+}
+
+function showError(msg){
+  const box = document.getElementById('errorBox');
+  document.getElementById('errorMsg').textContent = msg;
+  box.classList.add('show');
+  box.scrollIntoView({behavior:'smooth', block:'nearest'});
+}
+
+// Focus first field
+document.getElementById('fullName').focus();
+
+// Enter key support
+document.addEventListener('keydown', e => {
+  if(e.key === 'Enter') doSetup();
+});
+</script>
+</body>
+</html>

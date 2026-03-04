@@ -1,0 +1,1076 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sistema de Asistencia y Notas</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root[data-theme="light"] {
+    --bg:#f0f4ff; --surface:#ffffff; --surface2:#f7f9ff; --border:#dde3f0;
+    --text:#1a2035; --text2:#4a5568; --accent:#3b5bdb; --accent2:#4c6ef5;
+    --present:#0f9e6e; --present-bg:#e6faf4; --absent:#e53e3e; --absent-bg:#fff5f5;
+    --shadow:0 2px 16px rgba(59,91,219,.08); --shadow-lg:0 8px 40px rgba(59,91,219,.12);
+    --header-bg:linear-gradient(135deg,#3b5bdb 0%,#5c7cfa 100%);
+    --ad-bg:#f0fff4; --ad-color:#276749; --a-bg:#ebf8ff; --a-color:#2b6cb0;
+    --b-bg:#fffbeb; --b-color:#b7791f; --c-bg:#fff5f5; --c-color:#c53030;
+  }
+  :root[data-theme="dark"] {
+    --bg:#0e1117; --surface:#161b27; --surface2:#1e2535; --border:#2d3748;
+    --text:#e8eaf0; --text2:#8892a4; --accent:#5c7cfa; --accent2:#748ffc;
+    --present:#38d9a9; --present-bg:#0d2b24; --absent:#fc8181; --absent-bg:#2d1515;
+    --shadow:0 2px 16px rgba(0,0,0,.3); --shadow-lg:0 8px 40px rgba(0,0,0,.4);
+    --header-bg:linear-gradient(135deg,#1e2a56 0%,#2d3b80 100%);
+    --ad-bg:#0d2b1e; --ad-color:#68d391; --a-bg:#0d1f35; --a-color:#63b3ed;
+    --b-bg:#2d2010; --b-color:#f6ad55; --c-bg:#2d1515; --c-color:#fc8181;
+  }
+
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .3s,color .3s}
+
+  /* HEADER */
+  .header{background:var(--header-bg);padding:0 2rem;height:64px;display:flex;align-items:center;justify-content:space-between;box-shadow:0 4px 20px rgba(59,91,219,.2);position:sticky;top:0;z-index:100}
+  .header-brand{display:flex;align-items:center;gap:12px;color:white;font-size:1.18rem;font-weight:700;letter-spacing:-.3px}
+  .theme-toggle{background:rgba(255,255,255,.15);border:1px solid rgba(255,255,255,.25);color:white;border-radius:50px;padding:6px 14px;cursor:pointer;font-size:.82rem;font-family:'Outfit',sans-serif;font-weight:500;display:flex;align-items:center;gap:6px;transition:all .2s}
+  .theme-toggle:hover{background:rgba(255,255,255,.25)}
+
+  /* LAYOUT */
+  .layout{display:flex;height:calc(100vh - 64px)}
+  .sidebar{width:285px;min-width:285px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden;transition:background .3s}
+  .sidebar-header{padding:18px 16px 12px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+  .sidebar-title{font-size:.76rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--text2)}
+  .grades-list{flex:1;overflow-y:auto;padding:8px}
+
+  /* BUTTONS */
+  .btn{border:none;cursor:pointer;font-family:'Outfit',sans-serif;font-weight:600;border-radius:10px;transition:all .2s;display:inline-flex;align-items:center;gap:6px}
+  .btn-primary{background:var(--accent);color:white;padding:9px 18px;font-size:.88rem}
+  .btn-primary:hover{background:var(--accent2);transform:translateY(-1px);box-shadow:var(--shadow)}
+  .btn-sm{padding:6px 12px;font-size:.8rem;border-radius:8px}
+  .btn-xs{padding:4px 9px;font-size:.75rem;border-radius:7px}
+  .btn-ghost{background:transparent;color:var(--text2);padding:6px 10px;font-size:.82rem}
+  .btn-ghost:hover{background:var(--surface2);color:var(--text)}
+  .btn-success{background:var(--present-bg);color:var(--present)}
+  .btn-success:hover{filter:brightness(.95)}
+  .btn-danger{background:var(--absent-bg);color:var(--absent)}
+  .btn-cancel{background:var(--surface2);color:var(--text2);padding:9px 18px;font-size:.88rem}
+  .btn-delete{background:#fff0f0;color:#c53030;border:1.5px solid #fed7d7;padding:9px 18px;font-size:.88rem}
+  .btn-delete:hover{background:#c53030;color:white}
+  [data-theme="dark"] .btn-delete{background:#2d1515;color:#fc8181;border-color:#742a2a}
+  [data-theme="dark"] .btn-delete:hover{background:#c53030;color:white}
+  .confirm-modal .modal{max-width:380px}
+  .confirm-icon{font-size:2.8rem;text-align:center;margin-bottom:10px}
+  .confirm-msg{font-size:.92rem;color:var(--text2);text-align:center;line-height:1.55;margin-bottom:6px}
+  .confirm-detail{font-size:.82rem;color:var(--absent);text-align:center;background:var(--absent-bg);border-radius:8px;padding:7px 12px;margin-bottom:4px}
+  .btn-cancel:hover{background:var(--border)}
+  .btn-outline{background:transparent;border:1.5px solid var(--accent);color:var(--accent);padding:7px 14px;font-size:.84rem}
+  .btn-outline:hover{background:var(--accent);color:white}
+
+  /* GRADE ITEM */
+  .grade-item{border-radius:10px;margin-bottom:3px;cursor:pointer;transition:all .15s;overflow:hidden}
+  .grade-item-header{display:flex;align-items:center;justify-content:space-between;padding:10px 13px}
+  .grade-item:hover{background:var(--surface2)}
+  .grade-item.active{background:rgba(59,91,219,.08)}
+  .grade-item.active .grade-name{color:var(--accent)}
+  .grade-name{font-size:.9rem;font-weight:600}
+  .grade-meta{font-size:.72rem;color:var(--text2);margin-top:1px}
+  .grade-badge{background:var(--surface2);color:var(--text2);font-size:.68rem;font-weight:700;padding:2px 7px;border-radius:20px;font-family:'JetBrains Mono',monospace}
+  .grade-item.active .grade-badge{background:rgba(59,91,219,.12);color:var(--accent)}
+
+  /* MAIN */
+  .main{flex:1;overflow-y:auto;padding:26px 30px}
+  .empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;color:var(--text2);text-align:center;gap:14px}
+  .empty-state svg{opacity:.22}
+  .empty-state h3{font-size:1.15rem;font-weight:600;opacity:.6}
+  .empty-state p{font-size:.86rem;opacity:.5;max-width:260px}
+
+  /* PANEL */
+  .panel-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:22px;gap:16px}
+  .panel-title{font-size:1.5rem;font-weight:700;letter-spacing:-.5px}
+  .panel-subtitle{font-size:.88rem;color:var(--text2);margin-top:3px}
+  .panel-actions{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+
+  /* TABS */
+  .tabs{display:flex;gap:0;margin-bottom:22px;background:var(--surface2);border-radius:12px;padding:4px;width:fit-content;flex-wrap:wrap}
+  .tab-btn{padding:8px 18px;border:none;background:transparent;cursor:pointer;font-family:'Outfit',sans-serif;font-size:.86rem;font-weight:600;color:var(--text2);border-radius:9px;transition:all .2s;white-space:nowrap}
+  .tab-btn.active{background:var(--surface);color:var(--accent);box-shadow:var(--shadow)}
+
+  /* CARD */
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:18px 22px;box-shadow:var(--shadow);margin-bottom:18px;transition:background .3s}
+  .card-title{font-size:.76rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text2);margin-bottom:14px}
+
+  /* STUDENTS */
+  .student-row{display:flex;align-items:center;padding:9px 11px;border-radius:9px;margin-bottom:3px;transition:background .15s}
+  .student-row:hover{background:var(--surface2)}
+  .student-num{width:24px;height:24px;border-radius:50%;background:var(--surface2);color:var(--text2);font-size:.7rem;font-weight:700;font-family:'JetBrains Mono',monospace;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-right:10px}
+  .student-name-text{flex:1;font-size:.88rem;font-weight:500}
+
+  /* ATTENDANCE */
+  .attendance-row{display:flex;align-items:center;justify-content:space-between;padding:9px 13px;border-radius:10px;margin-bottom:5px;background:var(--surface2);transition:all .2s}
+  .att-btn{border:none;border-radius:7px;padding:5px 13px;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:600;cursor:pointer;transition:all .2s;opacity:.42}
+  .att-btn.present{background:var(--present-bg);color:var(--present)}
+  .att-btn.absent{background:var(--absent-bg);color:var(--absent)}
+  .att-btn.active{opacity:1;transform:scale(1.04)}
+
+  /* STATS */
+  .stats-row{display:flex;gap:12px;margin-bottom:18px}
+  .stat-card{flex:1;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px;text-align:center;box-shadow:var(--shadow)}
+  .stat-num{font-size:1.7rem;font-weight:700;font-family:'JetBrains Mono',monospace}
+  .stat-label{font-size:.75rem;color:var(--text2);font-weight:600;margin-top:2px;text-transform:uppercase;letter-spacing:.8px}
+  .stat-card.present-stat .stat-num{color:var(--present)}
+  .stat-card.absent-stat .stat-num{color:var(--absent)}
+  .stat-card.total-stat .stat-num{color:var(--accent)}
+
+  /* NOTES GRID */
+  .notes-grid{width:100%;overflow-x:auto}
+  .notes-table{border-collapse:collapse;width:100%;font-size:.82rem}
+  .notes-table th{background:var(--accent);color:white;padding:7px 10px;text-align:center;font-weight:600;font-size:.78rem;white-space:nowrap}
+  .notes-table th.comp-header{background:var(--accent2)}
+  .notes-table th.name-header{text-align:left;background:var(--accent)}
+  .notes-table td{padding:5px 7px;border:1px solid var(--border);text-align:center;vertical-align:middle}
+  .notes-table td.student-name-td{text-align:left;font-weight:500;white-space:nowrap;background:var(--surface2)}
+  .notes-table tr:nth-child(even) td{background:var(--surface2)}
+  .notes-table tr:hover td{filter:brightness(.97)}
+
+  .grade-select{border:1.5px solid var(--border);border-radius:7px;background:var(--surface2);color:var(--text);font-family:'Outfit',sans-serif;font-size:.82rem;padding:4px 8px;cursor:pointer;min-width:54px;transition:border-color .2s}
+  .grade-select:focus{outline:none;border-color:var(--accent)}
+
+  /* SCALE BADGES */
+  .badge-AD{background:var(--ad-bg);color:var(--ad-color);font-weight:700;border-radius:6px;padding:2px 7px;font-size:.8rem;display:inline-block}
+  .badge-A {background:var(--a-bg); color:var(--a-color); font-weight:700;border-radius:6px;padding:2px 7px;font-size:.8rem;display:inline-block}
+  .badge-B {background:var(--b-bg); color:var(--b-color); font-weight:700;border-radius:6px;padding:2px 7px;font-size:.8rem;display:inline-block}
+  .badge-C {background:var(--c-bg); color:var(--c-color); font-weight:700;border-radius:6px;padding:2px 7px;font-size:.8rem;display:inline-block}
+  .badge-empty{color:var(--text2);font-size:.78rem}
+
+  /* SUBJECT TREE */
+  .subject-item{background:var(--surface2);border:1px solid var(--border);border-radius:11px;margin-bottom:10px;overflow:hidden}
+  .subject-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer;transition:background .15s}
+  .subject-header:hover{background:var(--border)}
+  .subject-name{font-weight:700;font-size:.95rem}
+  .comp-block{padding:0 14px 12px}
+  .comp-item{margin-top:8px;background:var(--surface);border:1px solid var(--border);border-radius:9px;overflow:hidden}
+  .comp-header-row{display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:rgba(59,91,219,.05)}
+  .comp-name{font-weight:600;font-size:.87rem;color:var(--accent)}
+  .cap-list{padding:4px 14px 8px}
+  .cap-item{display:flex;align-items:center;justify-content:space-between;padding:5px 8px;border-radius:7px;font-size:.83rem}
+  .cap-item:hover{background:var(--surface2)}
+  .cap-dot{width:6px;height:6px;border-radius:50%;background:var(--text2);margin-right:8px;flex-shrink:0}
+
+  /* DATE BAR */
+  .date-bar{display:flex;align-items:center;gap:12px;margin-bottom:20px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:11px 16px;box-shadow:var(--shadow);flex-wrap:wrap}
+  .date-label{font-size:.8rem;font-weight:600;color:var(--text2)}
+  .date-input-styled{border:1.5px solid var(--border);border-radius:9px;background:var(--surface2);color:var(--text);padding:6px 11px;font-family:'Outfit',sans-serif;font-size:.88rem;cursor:pointer;transition:border-color .2s}
+  .date-input-styled:focus{outline:none;border-color:var(--accent)}
+  select.date-input-styled{min-width:160px}
+
+  /* MODAL */
+  .modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);backdrop-filter:blur(4px);z-index:200;display:none;align-items:center;justify-content:center}
+  .modal-overlay.open{display:flex}
+  .modal{background:var(--surface);border-radius:18px;padding:28px 30px;width:460px;max-width:95vw;max-height:85vh;overflow-y:auto;box-shadow:var(--shadow-lg);border:1px solid var(--border)}
+  .modal-title{font-size:1.15rem;font-weight:700;margin-bottom:20px}
+  .form-group{margin-bottom:14px}
+  .form-label{font-size:.78rem;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px;display:block}
+  .form-input{width:100%;padding:9px 13px;border:1.5px solid var(--border);border-radius:10px;background:var(--surface2);color:var(--text);font-family:'Outfit',sans-serif;font-size:.9rem;transition:border-color .2s}
+  .form-input:focus{outline:none;border-color:var(--accent)}
+  textarea.form-input{resize:vertical;min-height:110px}
+  .form-hint{font-size:.76rem;color:var(--text2);margin-top:4px}
+  .modal-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:20px}
+
+  /* TOAST */
+  .toast-container{position:fixed;bottom:22px;right:22px;z-index:999;display:flex;flex-direction:column;gap:7px}
+  .toast{background:var(--text);color:var(--bg);padding:11px 18px;border-radius:12px;font-size:.85rem;font-weight:500;box-shadow:var(--shadow-lg);opacity:0;transform:translateY(10px);animation:toastIn .3s forwards,toastOut .3s 2.5s forwards;max-width:300px}
+  @keyframes toastIn{to{opacity:1;transform:translateY(0)}}
+  @keyframes toastOut{to{opacity:0;transform:translateY(10px)}}
+
+  .no-items{text-align:center;padding:28px;color:var(--text2);font-size:.88rem;opacity:.55}
+  .sep{height:1px;background:var(--border);margin:14px 0}
+  .fade-in{animation:fadeIn .22s ease}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(5px)}to{opacity:1;transform:translateY(0)}}
+  ::-webkit-scrollbar{width:5px}
+  ::-webkit-scrollbar-thumb{background:var(--border);border-radius:10px}
+
+  .section-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+  .section-label{font-size:.78rem;font-weight:700;text-transform:uppercase;letter-spacing:1.2px;color:var(--text2)}
+  .inline-edit{display:flex;gap:6px;align-items:center}
+  .inline-edit input{padding:5px 10px;border:1.5px solid var(--border);border-radius:8px;background:var(--surface2);color:var(--text);font-family:'Outfit',sans-serif;font-size:.85rem;width:180px}
+  .inline-edit input:focus{outline:none;border-color:var(--accent)}
+
+  .periodo-chip{display:inline-flex;align-items:center;gap:6px;background:var(--surface2);border:1.5px solid var(--border);border-radius:8px;padding:5px 12px;font-size:.83rem;font-weight:600;cursor:pointer;transition:all .15s}
+  .periodo-chip:hover{border-color:var(--accent);color:var(--accent)}
+  .periodo-chip.active{background:rgba(59,91,219,.1);border-color:var(--accent);color:var(--accent)}
+  .periodos-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;align-items:center}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-brand">
+    <svg width="28" height="28" viewBox="0 0 28 28" fill="none">
+      <rect width="28" height="28" rx="8" fill="rgba(255,255,255,0.15)"/>
+      <path d="M7 9h14M7 13h10M7 17h12" stroke="white" stroke-width="2" stroke-linecap="round"/>
+      <circle cx="20" cy="18" r="4.5" fill="#38d9a9"/>
+      <path d="M18.3 18l1.1 1.3 2.3-2.3" stroke="white" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+    Sistema de Asistencia y Notas
+  </div>
+  <div style="display:flex;align-items:center;gap:10px">
+    <button class="theme-toggle" onclick="toggleTheme()">
+      <span id="themeIcon">🌙</span><span id="themeLabel">Oscuro</span>
+    </button>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-header">
+      <span class="sidebar-title">Grados</span>
+      <button class="btn btn-primary btn-sm" onclick="openAddGrade()">+ Agregar</button>
+    </div>
+    <div class="grades-list" id="gradesList">
+      <div class="no-items" style="padding-top:36px;">Sin grados aún.</div>
+    </div>
+  </div>
+  <div class="main" id="mainContent">
+    <div class="empty-state">
+      <svg width="76" height="76" viewBox="0 0 76 76" fill="none">
+        <rect x="10" y="8" width="56" height="60" rx="8" stroke="currentColor" stroke-width="2.5"/>
+        <path d="M22 26h32M22 36h24M22 46h20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+      <h3>Selecciona un grado</h3>
+      <p>Elige un grado de la barra lateral para gestionar alumnos, asistencia y notas</p>
+    </div>
+  </div>
+</div>
+
+<!-- ── MODALS ──────────────────────────────────────────────────────────────── -->
+<!-- Grade Modal -->
+<div class="modal-overlay" id="addGradeModal">
+  <div class="modal">
+    <div class="modal-title" id="gradeModalTitle">Nuevo Grado</div>
+    <div class="form-group"><label class="form-label">Nombre del Grado</label><input type="text" class="form-input" id="gradeName" placeholder="Ej: 1° Primaria"></div>
+    <div class="form-group"><label class="form-label">Sección</label><input type="text" class="form-input" id="gradeSection" placeholder="Ej: A, B, C"></div>
+    <div class="form-group"><label class="form-label">Nombre del Profesor(a)</label><input type="text" class="form-input" id="gradeTeacher" placeholder="Ej: Prof. María García"></div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="closeModal('addGradeModal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveGrade()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Students Modal -->
+<div class="modal-overlay" id="addStudentsModal">
+  <div class="modal">
+    <div class="modal-title">Agregar Alumnos</div>
+    <div class="form-group">
+      <label class="form-label">Lista de Alumnos</label>
+      <textarea class="form-input" id="studentNames" placeholder="Pega o escribe los nombres, uno por línea:&#10;&#10;Juan Pérez García&#10;María López Ruiz&#10;Carlos Díaz Torres"></textarea>
+      <p class="form-hint">📋 Un nombre por línea — puedes pegar una lista completa</p>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="closeModal('addStudentsModal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveStudents()">Agregar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Edit Student Modal -->
+<div class="modal-overlay" id="editStudentModal">
+  <div class="modal">
+    <div class="modal-title">Editar Alumno</div>
+    <input type="hidden" id="editStudentId">
+    <div class="form-group"><label class="form-label">Nombre</label><input type="text" class="form-input" id="editStudentName"></div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="closeModal('editStudentModal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveEditStudent()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Subject Modal -->
+<div class="modal-overlay" id="addSubjectModal">
+  <div class="modal">
+    <div class="modal-title" id="subjectModalTitle">Nueva Materia</div>
+    <input type="hidden" id="editSubjectId">
+    <div class="form-group"><label class="form-label">Nombre de la Materia</label><input type="text" class="form-input" id="subjectName" placeholder="Ej: Matemáticas, Comunicación, Ciencia..."></div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="closeModal('addSubjectModal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveSubject()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Competencia Modal -->
+<div class="modal-overlay" id="addCompModal">
+  <div class="modal">
+    <div class="modal-title" id="compModalTitle">Nueva Competencia</div>
+    <input type="hidden" id="editCompSubjectId">
+    <input type="hidden" id="editCompId">
+    <div class="form-group"><label class="form-label">Nombre de la Competencia</label><input type="text" class="form-input" id="compName" placeholder="Ej: Resuelve problemas de cantidad"></div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="closeModal('addCompModal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveComp()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Capacidad Modal -->
+<div class="modal-overlay" id="addCapModal">
+  <div class="modal">
+    <div class="modal-title" id="capModalTitle">Nueva Capacidad</div>
+    <input type="hidden" id="editCapSubjectId">
+    <input type="hidden" id="editCapCompId">
+    <input type="hidden" id="editCapId">
+    <div class="form-group"><label class="form-label">Nombre de la Capacidad</label><input type="text" class="form-input" id="capName" placeholder="Ej: Traduce cantidades a expresiones numéricas"></div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="closeModal('addCapModal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="saveCap()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Periodo Modal -->
+<div class="modal-overlay" id="addPeriodoModal">
+  <div class="modal">
+    <div class="modal-title" id="periodoModalTitle">Nuevo Periodo</div>
+    <input type="hidden" id="editPeriodoId">
+    <div class="form-group"><label class="form-label">Nombre del Periodo</label><input type="text" class="form-input" id="periodoName" placeholder="Ej: I Bimestre, II Trimestre, 1er Periodo..."></div>
+    <div class="modal-actions">
+      <button class="btn btn-cancel" onclick="closeModal('addPeriodoModal')">Cancelar</button>
+      <button class="btn btn-primary" onclick="savePeriodo()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Confirm Delete Modal -->
+<div class="modal-overlay confirm-modal" id="confirmModal">
+  <div class="modal" style="max-width:360px;">
+    <div class="confirm-icon">🗑️</div>
+    <div class="modal-title" id="confirmTitle" style="text-align:center;font-size:1.1rem;">¿Eliminar?</div>
+    <div class="confirm-msg" id="confirmMsg"></div>
+    <div class="confirm-detail" id="confirmDetail" style="display:none"></div>
+    <div class="modal-actions" style="justify-content:center;margin-top:20px;gap:12px;">
+      <button class="btn btn-cancel" style="min-width:110px" onclick="closeModal('confirmModal')">Cancelar</button>
+      <button class="btn btn-delete" style="min-width:110px" id="confirmOkBtn" onclick="confirmDelete()">🗑️ Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ── JAVASCRIPT ─────────────────────────────────────────────────────────── -->
+<script>
+let grades = [], currentGradeId = null, currentTab = 'students';
+let editingGradeId = null, editingPeriodoId = null, editingSubjectId = null;
+let editingCompSubjectId = null, editingCompId = null;
+let editingCapSubjectId = null, editingCapCompId = null, editingCapId = null;
+let subjects = [], periodos = [];
+let currentPeriodoId = null;
+let attendance = {}, notesData = {};
+const today = new Date().toISOString().split('T')[0];
+let currentDate = today;
+
+/* ── THEME ── */
+function toggleTheme(){
+  const html = document.documentElement, dark = html.getAttribute('data-theme')==='dark';
+  html.setAttribute('data-theme', dark?'light':'dark');
+  document.getElementById('themeIcon').textContent = dark?'🌙':'☀️';
+  document.getElementById('themeLabel').textContent = dark?'Oscuro':'Claro';
+  localStorage.setItem('theme', dark?'light':'dark');
+}
+(()=>{
+  const s = localStorage.getItem('theme')||'light';
+  document.documentElement.setAttribute('data-theme',s);
+  if(s==='dark'){document.getElementById('themeIcon').textContent='☀️';document.getElementById('themeLabel').textContent='Claro';}
+})();
+
+/* ── API ── */
+async function api(path,method='GET',body=null){
+  const opts={method,headers:{'Content-Type':'application/json'}};
+  if(body) opts.body=JSON.stringify(body);
+  const r=await fetch(path,opts); return r.json();
+}
+
+/* ── GRADES ── */
+async function loadGrades(){ grades=await api('/api/grades'); renderSidebar(); }
+
+function renderSidebar(){
+  const el=document.getElementById('gradesList');
+  if(!grades.length){el.innerHTML='<div class="no-items" style="padding-top:36px;">Sin grados aún.</div>';return;}
+  el.innerHTML=grades.map(g=>`
+    <div class="grade-item ${g.id===currentGradeId?'active':''}" onclick="selectGrade('${g.id}')">
+      <div class="grade-item-header">
+        <div><div class="grade-name">${g.name}</div><div class="grade-meta">Secc. ${g.section} · ${g.students.length} alumnos</div></div>
+        <span class="grade-badge">${g.section}</span>
+      </div>
+    </div>`).join('');
+}
+
+function selectGrade(id){
+  currentGradeId=id; currentTab='students';
+  renderSidebar(); loadAndRenderMain();
+}
+function getGrade(){ return grades.find(g=>g.id===currentGradeId); }
+
+async function loadAndRenderMain(){
+  if(!currentGradeId) return;
+  subjects = await api(`/api/subjects/${currentGradeId}`);
+  const g = getGrade();
+  periodos = g ? (g.periodos||[]) : [];
+  if(!currentPeriodoId && periodos.length) currentPeriodoId = periodos[0].id;
+  renderMain();
+}
+
+/* ── MAIN PANEL ── */
+function renderMain(){
+  const g=getGrade(); if(!g) return;
+  const main=document.getElementById('mainContent');
+  main.innerHTML=`<div class="fade-in">
+    <div class="panel-header">
+      <div>
+        <div class="panel-title">${g.name} — Sección ${g.section}</div>
+        <div class="panel-subtitle">${g.teacher?'👨‍🏫 '+g.teacher:'Sin profesor'} · ${g.students.length} alumnos</div>
+      </div>
+      <div class="panel-actions">
+        <button class="btn btn-ghost btn-sm" onclick="openEditGrade()">✏️ Editar Grado</button>
+        <button class="btn btn-delete btn-sm" onclick="askDeleteGrade()">🗑️ Eliminar Grado</button>
+      </div>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn ${currentTab==='students'?'active':''}" onclick="switchTab('students')">📋 Alumnos</button>
+      <button class="tab-btn ${currentTab==='attendance'?'active':''}" onclick="switchTab('attendance')">✅ Asistencia</button>
+      <button class="tab-btn ${currentTab==='subjects'?'active':''}" onclick="switchTab('subjects')">📚 Materias</button>
+      <button class="tab-btn ${currentTab==='notes'?'active':''}" onclick="switchTab('notes')">📝 Notas</button>
+      <button class="tab-btn ${currentTab==='report'?'active':''}" onclick="switchTab('report')">📄 Reportes</button>
+    </div>
+    <div id="tabContent"></div>
+  </div>`;
+  renderTab();
+}
+
+function switchTab(tab){
+  currentTab=tab;
+  document.querySelectorAll('.tab-btn').forEach((b,i)=>{
+    b.classList.toggle('active', ['students','attendance','subjects','notes','report'][i]===tab);
+  });
+  renderTab();
+}
+
+function renderTab(){
+  const el=document.getElementById('tabContent'); if(!el) return;
+  if(currentTab==='students')   renderStudentsTab(el);
+  else if(currentTab==='attendance') renderAttendanceTab(el);
+  else if(currentTab==='subjects')   renderSubjectsTab(el);
+  else if(currentTab==='notes')      renderNotesTab(el);
+  else if(currentTab==='report')     renderReportTab(el);
+}
+
+/* ── STUDENTS TAB ── */
+function renderStudentsTab(el){
+  const g=getGrade();
+  el.innerHTML=`<div class="card">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+      <span class="card-title">Lista de Alumnos (${g.students.length})</span>
+      <button class="btn btn-primary btn-sm" onclick="openAddStudents()">+ Agregar Alumnos</button>
+    </div>
+    ${!g.students.length?'<div class="no-items">Sin alumnos aún.</div>':
+      g.students.map((s,i)=>`
+        <div class="student-row">
+          <span class="student-num">${i+1}</span>
+          <span class="student-name-text">${s.name}</span>
+          <div style="display:flex;gap:4px;">
+            <button class="btn btn-ghost btn-xs" onclick="openEditStudent('${s.id}','${esc(s.name)}')">✏️</button>
+            <button class="btn btn-delete btn-xs" onclick="askDeleteStudent('${s.id}','${esc(s.name)}')">🗑️</button>
+          </div>
+        </div>`).join('')}
+  </div>`;
+}
+
+/* ── ATTENDANCE TAB ── */
+async function renderAttendanceTab(el){
+  const g=getGrade();
+  let att={};
+  try{ att=await api(`/api/attendance/${currentDate}/${currentGradeId}`); }catch(e){}
+  attendance=att;
+  const present=g.students.filter(s=>att[s.id]===true).length;
+  const absent=g.students.filter(s=>att[s.id]!==true).length;
+
+  el.innerHTML=`
+    <div class="date-bar">
+      <span class="date-label">📅 Fecha:</span>
+      <input type="date" class="date-input-styled" value="${currentDate}" onchange="changeDate(this.value)">
+      <span style="margin-left:auto;font-size:.78rem;color:var(--text2)">Cambia la fecha para editar otro día</span>
+    </div>
+    <div class="stats-row">
+      <div class="stat-card total-stat"><div class="stat-num">${g.students.length}</div><div class="stat-label">Total</div></div>
+      <div class="stat-card present-stat"><div class="stat-num" id="statPresent">${present}</div><div class="stat-label">Presentes</div></div>
+      <div class="stat-card absent-stat"><div class="stat-num" id="statAbsent">${absent}</div><div class="stat-label">Ausentes</div></div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <span class="card-title">Registro del día</span>
+        <div style="display:flex;gap:7px;">
+          <button class="btn btn-success btn-sm" onclick="markAll(true)">✓ Todos Presentes</button>
+          <button class="btn btn-danger btn-sm" onclick="markAll(false)">✗ Todos Ausentes</button>
+        </div>
+      </div>
+      ${!g.students.length?'<div class="no-items">Sin alumnos en este grado.</div>':
+        g.students.map((s,i)=>`
+          <div class="attendance-row" id="attRow_${s.id}">
+            <span class="student-num">${i+1}</span>
+            <span class="student-name-text" style="flex:1;margin-left:9px;">${s.name}</span>
+            <div style="display:flex;gap:4px;">
+              <button class="att-btn present ${att[s.id]===true?'active':''}" onclick="setAtt('${s.id}',true)">✓ Presente</button>
+              <button class="att-btn absent ${att[s.id]===false?'active':''}" onclick="setAtt('${s.id}',false)">✗ Ausente</button>
+            </div>
+          </div>`).join('')}
+    </div>
+    <div style="display:flex;justify-content:flex-end;">
+      <button class="btn btn-primary" onclick="saveAttendance()">💾 Guardar Asistencia</button>
+    </div>`;
+}
+
+function changeDate(v){ currentDate=v; renderAttendanceTab(document.getElementById('tabContent')); }
+
+function setAtt(sid, value){
+  attendance[sid]=value;
+  const row=document.getElementById('attRow_'+sid);
+  if(row){ row.querySelectorAll('.att-btn').forEach(b=>b.classList.remove('active')); row.querySelector('.att-btn.'+(value?'present':'absent')).classList.add('active'); }
+  const g=getGrade();
+  const p=g.students.filter(s=>attendance[s.id]===true).length;
+  const a=g.students.filter(s=>attendance[s.id]!==true).length;
+  const sp=document.getElementById('statPresent'), sa=document.getElementById('statAbsent');
+  if(sp) sp.textContent=p; if(sa) sa.textContent=a;
+}
+function markAll(v){ getGrade().students.forEach(s=>setAtt(s.id,v)); }
+async function saveAttendance(){
+  await api('/api/attendance','POST',{date:currentDate,grade_id:currentGradeId,records:attendance});
+  showToast('✅ Asistencia guardada');
+}
+
+/* ── SUBJECTS TAB ── */
+function renderSubjectsTab(el){
+  el.innerHTML=`
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <span class="card-title">Materias del Grado</span>
+        <button class="btn btn-primary btn-sm" onclick="openAddSubject()">+ Nueva Materia</button>
+      </div>
+      <div id="subjectsList">${renderSubjectsList()}</div>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;">
+        <span class="card-title">Periodos / Bimestres</span>
+        <button class="btn btn-primary btn-sm" onclick="openAddPeriodo()">+ Nuevo Periodo</button>
+      </div>
+      <div id="periodosList">${renderPeriodosList()}</div>
+    </div>`;
+}
+
+function renderSubjectsList(){
+  if(!subjects.length) return '<div class="no-items">Sin materias aún.</div>';
+  return subjects.map(s=>`
+    <div class="subject-item">
+      <div class="subject-header">
+        <div style="display:flex;align-items:center;gap:10px;">
+          <span style="font-size:1.1rem">📚</span>
+          <span class="subject-name">${s.name}</span>
+          <span style="font-size:.75rem;color:var(--text2)">${s.competencias.length} competencia(s)</span>
+        </div>
+        <div style="display:flex;gap:6px;">
+          <button class="btn btn-ghost btn-xs" onclick="openEditSubject('${s.id}','${esc(s.name)}')">✏️</button>
+          <button class="btn btn-primary btn-xs" onclick="openAddComp('${s.id}')">+ Competencia</button>
+          <button class="btn btn-delete btn-xs" onclick="askDeleteSubject('${s.id}','${esc(s.name)}')">🗑️</button>
+        </div>
+      </div>
+      <div class="comp-block">
+        ${s.competencias.map(c=>`
+          <div class="comp-item">
+            <div class="comp-header-row">
+              <span class="comp-name">▸ ${c.name}</span>
+              <div style="display:flex;gap:5px;">
+                <button class="btn btn-ghost btn-xs" onclick="openEditComp('${s.id}','${c.id}','${esc(c.name)}')">✏️</button>
+                <button class="btn btn-outline btn-xs" onclick="openAddCap('${s.id}','${c.id}')">+ Capacidad</button>
+                <button class="btn btn-delete btn-xs" onclick="askDeleteComp('${s.id}','${c.id}','${esc(c.name)}')">🗑️</button>
+              </div>
+            </div>
+            <div class="cap-list">
+              ${!c.capacidades.length?'<span style="font-size:.78rem;color:var(--text2);padding:4px 0;display:block;">Sin capacidades aún.</span>':
+                c.capacidades.map(cap=>`
+                  <div class="cap-item">
+                    <span class="cap-dot"></span>
+                    <span style="flex:1">${cap.name}</span>
+                    <div style="display:flex;gap:4px;">
+                      <button class="btn btn-ghost btn-xs" onclick="openEditCap('${s.id}','${c.id}','${cap.id}','${esc(cap.name)}')">✏️</button>
+                      <button class="btn btn-delete btn-xs" onclick="askDeleteCap('${s.id}','${c.id}','${cap.id}','${esc(cap.name)}')">🗑️</button>
+                    </div>
+                  </div>`).join('')}
+            </div>
+          </div>`).join('')}
+      </div>
+    </div>`).join('');
+}
+
+function renderPeriodosList(){
+  if(!periodos.length) return '<div class="no-items">Sin periodos aún.</div>';
+  return `<div style="display:flex;gap:8px;flex-wrap:wrap">` +
+    periodos.map(p=>`
+      <div style="display:flex;align-items:center;gap:5px;background:var(--surface2);border:1.5px solid var(--border);border-radius:9px;padding:7px 13px;">
+        <span style="font-size:.88rem;font-weight:600;">📅 ${p.name}</span>
+        <button class="btn btn-ghost btn-xs" onclick="openEditPeriodo('${p.id}','${esc(p.name)}')">✏️</button>
+        <button class="btn btn-delete btn-xs" onclick="askDeletePeriodo('${p.id}','${esc(p.name)}')">🗑️</button>
+      </div>`).join('') + `</div>`;
+}
+
+/* ── NOTES TAB ── */
+async function renderNotesTab(el){
+  const g=getGrade();
+  if(!periodos.length){
+    el.innerHTML=`<div class="card"><div class="no-items">Primero agrega al menos un periodo en la pestaña <b>Materias</b>.</div></div>`;
+    return;
+  }
+  if(!currentPeriodoId) currentPeriodoId=periodos[0].id;
+
+  let nd={};
+  try{ nd=await api(`/api/notes/${currentGradeId}/${currentPeriodoId}`); }catch(e){}
+  notesData=nd;
+
+  const selSubj = subjects.length ? subjects[0].id : null;
+  let currentSubjId = el._currentSubjId || selSubj;
+  el._currentSubjId = currentSubjId;
+
+  el.innerHTML=`
+    <div class="date-bar">
+      <span class="date-label">📅 Periodo:</span>
+      <div class="periodos-row" style="margin:0;gap:7px;">
+        ${periodos.map(p=>`<span class="periodo-chip ${p.id===currentPeriodoId?'active':''}" onclick="changePeriodo('${p.id}')">${p.name}</span>`).join('')}
+      </div>
+    </div>
+    <div class="date-bar" style="margin-top:-6px;">
+      <span class="date-label">📚 Materia:</span>
+      <select class="date-input-styled" onchange="changeNotesSubject(this.value)">
+        ${subjects.map(s=>`<option value="${s.id}" ${s.id===currentSubjId?'selected':''}>${s.name}</option>`).join('')}
+      </select>
+    </div>
+    <div id="notesTableArea">${renderNotesTable(currentSubjId)}</div>
+    <div style="display:flex;justify-content:flex-end;margin-top:10px;gap:10px;">
+      <button class="btn btn-primary" onclick="saveNotes()">💾 Guardar Notas</button>
+    </div>`;
+}
+
+function renderNotesTable(subjId){
+  const g=getGrade();
+  const subj=subjects.find(s=>s.id===subjId);
+  if(!subj) return '<div class="no-items">Selecciona una materia.</div>';
+  if(!subj.competencias.length) return '<div class="no-items">Esta materia no tiene competencias. Agrégalas en la pestaña Materias.</div>';
+  if(!g.students.length) return '<div class="no-items">Sin alumnos en este grado.</div>';
+
+  const SCALE=['AD','A','B','C'];
+
+  // Build header
+  let headerComp='<th class="name-header" rowspan="2" style="min-width:160px">Alumno</th>';
+  let headerCap='';
+  let allCaps=[];
+  subj.competencias.forEach(c=>{
+    const ncaps=c.capacidades.length||1;
+    headerComp+=`<th class="comp-header" colspan="${ncaps+1}">${c.name}</th>`;
+    if(!c.capacidades.length){
+      headerCap+=`<th style="background:var(--surface2);color:var(--text2);font-size:.72rem;">Sin cap.</th>`;
+      allCaps.push({compId:c.id,capId:null,label:'–'});
+    } else {
+      c.capacidades.forEach(cap=>{
+        headerCap+=`<th style="font-size:.72rem;max-width:90px;white-space:normal;background:var(--surface2);color:var(--text)">${cap.name}</th>`;
+        allCaps.push({compId:c.id,capId:cap.id,label:cap.name,compName:c.name});
+      });
+    }
+    headerCap+=`<th style="background:rgba(59,91,219,.12);color:var(--accent);font-size:.75rem;">Prom.</th>`;
+    allCaps.push({compId:c.id,capId:'__PROM__',label:'Prom.',isProm:true});
+  });
+  headerComp+=`<th style="background:#1a365d;color:white;font-size:.78rem;">PROM.<br>FINAL</th>`;
+
+  // Build rows
+  let rows='';
+  g.students.forEach((s,si)=>{
+    const sn=notesData[s.id]||{};
+    let compProms=[];
+    let rowCells=`<td class="student-name-td">${s.name}</td>`;
+
+    subj.competencias.forEach(c=>{
+      const capNotes=sn[subjId]&&sn[subjId][c.id]||{};
+      let capVals=[];
+      if(!c.capacidades.length){
+        rowCells+=`<td><select class="grade-select" data-sid="${s.id}" data-subid="${subjId}" data-cid="${c.id}" data-capid="__SINGLE__" onchange="updateNote(this)">
+          <option value="">–</option>${SCALE.map(v=>`<option value="${v}" ${capNotes['__SINGLE__']===v?'selected':''}>${v}</option>`).join('')}</select></td>`;
+        if(capNotes['__SINGLE__']) capVals.push(scaleVal(capNotes['__SINGLE__']));
+      } else {
+        c.capacidades.forEach(cap=>{
+          const val=capNotes[cap.id]||'';
+          rowCells+=`<td><select class="grade-select" data-sid="${s.id}" data-subid="${subjId}" data-cid="${c.id}" data-capid="${cap.id}" onchange="updateNote(this)">
+            <option value="">–</option>${SCALE.map(v=>`<option value="${v}" ${val===v?'selected':''}>${v}</option>`).join('')}</select></td>`;
+          if(val) capVals.push(scaleVal(val));
+        });
+      }
+      // comp prom
+      let compProm='–';
+      if(capVals.length){ const avg=capVals.reduce((a,b)=>a+b,0)/capVals.length; compProm=scaleLabel(avg); compProms.push(avg); }
+      rowCells+=`<td id="cp_${s.id}_${c.id}"><span class="${compProm!=='–'?'badge-'+compProm:'badge-empty'}">${compProm}</span></td>`;
+    });
+
+    // final prom
+    let finalProm='–';
+    if(compProms.length){ const favg=compProms.reduce((a,b)=>a+b,0)/compProms.length; finalProm=scaleLabel(favg); }
+    rowCells+=`<td id="fp_${s.id}" style="background:var(--surface2)"><span class="${finalProm!=='–'?'badge-'+finalProm:'badge-empty'}">${finalProm}</span></td>`;
+    rows+=`<tr>${rowCells}</tr>`;
+  });
+
+  return `<div class="notes-grid card" style="padding:0;overflow:hidden;">
+    <table class="notes-table">
+      <thead><tr>${headerComp}</tr><tr>${headerCap}</tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  </div>`;
+}
+
+function scaleVal(v){ return {'AD':4,'A':3,'B':2,'C':1}[v]||0; }
+function scaleLabel(avg){
+  if(avg>=3.5) return 'AD'; if(avg>=2.5) return 'A'; if(avg>=1.5) return 'B'; return 'C';
+}
+
+function updateNote(sel){
+  const {sid,subid,cid,capid}=sel.dataset;
+  const val=sel.value;
+  if(!notesData[sid]) notesData[sid]={};
+  if(!notesData[sid][subid]) notesData[sid][subid]={};
+  if(!notesData[sid][subid][cid]) notesData[sid][subid][cid]={};
+  if(val) notesData[sid][subid][cid][capid]=val;
+  else delete notesData[sid][subid][cid][capid];
+  recalcRow(sid, subid);
+}
+
+function recalcRow(sid, subjId){
+  const g=getGrade();
+  const subj=subjects.find(s=>s.id===subjId); if(!subj) return;
+  const sn=notesData[sid]||{};
+  let compProms=[];
+  subj.competencias.forEach(c=>{
+    const capNotes=sn[subjId]&&sn[subjId][c.id]||{};
+    const vals=Object.values(capNotes).map(v=>scaleVal(v)).filter(v=>v>0);
+    let cpLbl='–';
+    if(vals.length){ const avg=vals.reduce((a,b)=>a+b,0)/vals.length; cpLbl=scaleLabel(avg); compProms.push(avg); }
+    const cpEl=document.getElementById(`cp_${sid}_${c.id}`);
+    if(cpEl) cpEl.innerHTML=`<span class="${cpLbl!=='–'?'badge-'+cpLbl:'badge-empty'}">${cpLbl}</span>`;
+  });
+  let fpLbl='–';
+  if(compProms.length){ const favg=compProms.reduce((a,b)=>a+b,0)/compProms.length; fpLbl=scaleLabel(favg); }
+  const fpEl=document.getElementById(`fp_${sid}`);
+  if(fpEl) fpEl.innerHTML=`<span class="${fpLbl!=='–'?'badge-'+fpLbl:'badge-empty'}">${fpLbl}</span>`;
+}
+
+async function saveNotes(){
+  await api(`/api/notes/${currentGradeId}/${currentPeriodoId}`,'POST',notesData);
+  showToast('✅ Notas guardadas');
+}
+
+function changePeriodo(id){
+  currentPeriodoId=id;
+  renderNotesTab(document.getElementById('tabContent'));
+}
+function changeNotesSubject(id){
+  const el=document.getElementById('tabContent');
+  el._currentSubjId=id;
+  document.getElementById('notesTableArea').innerHTML=renderNotesTable(id);
+}
+
+/* ── REPORT TAB ── */
+function renderReportTab(el){
+  el.innerHTML=`
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px;">
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;">📋 Reporte de Asistencia</div>
+        <div class="form-group"><label class="form-label">Fecha</label><input type="date" class="form-input date-input-styled" id="reportDate" value="${currentDate}"></div>
+        <div style="background:var(--surface2);border-radius:9px;padding:12px;font-size:.82rem;color:var(--text2);margin-bottom:14px;">
+          Incluye: nombre del profesor, alumnos presentes, ausentes, estadísticas y firma.
+        </div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;padding:11px;" onclick="downloadAttPDF()">⬇️ Descargar PDF Asistencia</button>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom:16px;">📝 Reporte de Notas</div>
+        <div class="form-group">
+          <label class="form-label">Periodo</label>
+          <select class="form-input" id="reportPeriodo">
+            ${periodos.map(p=>`<option value="${p.id}">${p.name}</option>`).join('')}
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Materia</label>
+          <select class="form-input" id="reportSubject">
+            <option value="">— Todas las materias —</option>
+            ${subjects.map(s=>`<option value="${s.id}">${s.name}</option>`).join('')}
+          </select>
+        </div>
+        <div style="background:var(--surface2);border-radius:9px;padding:12px;font-size:.82rem;color:var(--text2);margin-bottom:14px;">
+          Incluye: notas por alumno, promedios por competencia, promedio final, aprobados/desaprobados y estadísticas.
+        </div>
+        <button class="btn btn-primary" style="width:100%;justify-content:center;padding:11px;" onclick="downloadNotesPDF()">⬇️ Descargar PDF Notas</button>
+      </div>
+    </div>`;
+}
+
+async function downloadAttPDF(){
+  const date=document.getElementById('reportDate')?.value||currentDate;
+  showToast('⏳ Generando PDF...');
+  try{
+    const r=await fetch('/api/report/pdf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({date,grade_id:currentGradeId})});
+    const blob=await r.blob(); const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download=`asistencia_${date}.pdf`; a.click(); URL.revokeObjectURL(url);
+    showToast('✅ PDF descargado');
+  }catch(e){ showToast('❌ Error al generar PDF'); }
+}
+
+async function downloadNotesPDF(){
+  const perid=document.getElementById('reportPeriodo')?.value;
+  const subid=document.getElementById('reportSubject')?.value||null;
+  if(!perid){ showToast('⚠️ Selecciona un periodo'); return; }
+  showToast('⏳ Generando PDF...');
+  try{
+    const r=await fetch('/api/report/notes/pdf',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({grade_id:currentGradeId,period_id:perid,subject_id:subid||undefined})});
+    const blob=await r.blob(); const url=URL.createObjectURL(blob);
+    const a=document.createElement('a'); a.href=url; a.download=`notas_${perid}.pdf`; a.click(); URL.revokeObjectURL(url);
+    showToast('✅ PDF de notas descargado');
+  }catch(e){ showToast('❌ Error al generar PDF'); }
+}
+
+/* ── GRADE CRUD ── */
+function openAddGrade(){
+  editingGradeId=null;
+  document.getElementById('gradeModalTitle').textContent='Nuevo Grado';
+  ['gradeName','gradeSection','gradeTeacher'].forEach(id=>document.getElementById(id).value='');
+  openModal('addGradeModal');
+}
+function openEditGrade(){
+  const g=getGrade(); if(!g) return;
+  editingGradeId=g.id;
+  document.getElementById('gradeModalTitle').textContent='Editar Grado';
+  document.getElementById('gradeName').value=g.name;
+  document.getElementById('gradeSection').value=g.section;
+  document.getElementById('gradeTeacher').value=g.teacher||'';
+  openModal('addGradeModal');
+}
+async function saveGrade(){
+  const name=document.getElementById('gradeName').value.trim();
+  const section=document.getElementById('gradeSection').value.trim();
+  const teacher=document.getElementById('gradeTeacher').value.trim();
+  if(!name||!section){ showToast('⚠️ Completa todos los campos'); return; }
+  if(editingGradeId){
+    const u=await api(`/api/grades/${editingGradeId}`,'PUT',{name,section,teacher});
+    const g=grades.find(g=>g.id===editingGradeId);
+    if(g){g.name=u.name;g.section=u.section;g.teacher=u.teacher;}
+    showToast('✅ Grado actualizado');
+  } else {
+    const g=await api('/api/grades','POST',{name,section,teacher}); grades.push(g); showToast('✅ Grado agregado');
+  }
+  closeModal('addGradeModal'); renderSidebar(); if(editingGradeId) renderMain();
+}
+
+/* ── STUDENTS CRUD ── */
+function openAddStudents(){ document.getElementById('studentNames').value=''; openModal('addStudentsModal'); }
+async function saveStudents(){
+  const text=document.getElementById('studentNames').value;
+  const names=text.split('\n').map(n=>n.trim()).filter(n=>n);
+  if(!names.length){ showToast('⚠️ Escribe al menos un nombre'); return; }
+  const added=await api(`/api/grades/${currentGradeId}/students`,'POST',{names});
+  getGrade().students.push(...added);
+  closeModal('addStudentsModal'); renderSidebar(); renderTab();
+  showToast(`✅ ${added.length} alumno(s) agregado(s)`);
+}
+function openEditStudent(id,name){ document.getElementById('editStudentId').value=id; document.getElementById('editStudentName').value=name; openModal('editStudentModal'); }
+async function saveEditStudent(){
+  const id=document.getElementById('editStudentId').value;
+  const name=document.getElementById('editStudentName').value.trim();
+  if(!name){ showToast('⚠️ El nombre no puede estar vacío'); return; }
+  const u=await api(`/api/grades/${currentGradeId}/students/${id}`,'PUT',{name});
+  const s=getGrade().students.find(s=>s.id===id); if(s) s.name=u.name;
+  closeModal('editStudentModal'); renderTab(); showToast('✅ Alumno actualizado');
+}
+
+/* ── SUBJECTS CRUD ── */
+function openAddSubject(){ editingSubjectId=null; document.getElementById('subjectModalTitle').textContent='Nueva Materia'; document.getElementById('subjectName').value=''; openModal('addSubjectModal'); }
+function openEditSubject(id,name){ editingSubjectId=id; document.getElementById('subjectModalTitle').textContent='Editar Materia'; document.getElementById('subjectName').value=name; document.getElementById('editSubjectId').value=id; openModal('addSubjectModal'); }
+async function saveSubject(){
+  const name=document.getElementById('subjectName').value.trim(); if(!name){ showToast('⚠️ Escribe el nombre'); return; }
+  if(editingSubjectId){
+    const u=await api(`/api/subjects/${currentGradeId}/${editingSubjectId}`,'PUT',{name});
+    const s=subjects.find(s=>s.id===editingSubjectId); if(s) s.name=u.name;
+    showToast('✅ Materia actualizada');
+  } else {
+    const s=await api(`/api/subjects/${currentGradeId}`,'POST',{name}); subjects.push(s); showToast('✅ Materia agregada');
+  }
+  closeModal('addSubjectModal'); refreshSubjectsUI();
+}
+
+/* ── COMPETENCIAS CRUD ── */
+function openAddComp(subid){ editingCompSubjectId=subid; editingCompId=null; document.getElementById('compModalTitle').textContent='Nueva Competencia'; document.getElementById('compName').value=''; document.getElementById('editCompSubjectId').value=subid; document.getElementById('editCompId').value=''; openModal('addCompModal'); }
+function openEditComp(subid,compid,name){ editingCompSubjectId=subid; editingCompId=compid; document.getElementById('compModalTitle').textContent='Editar Competencia'; document.getElementById('compName').value=name; document.getElementById('editCompSubjectId').value=subid; document.getElementById('editCompId').value=compid; openModal('addCompModal'); }
+async function saveComp(){
+  const name=document.getElementById('compName').value.trim(); const subid=document.getElementById('editCompSubjectId').value; const compid=document.getElementById('editCompId').value;
+  if(!name){ showToast('⚠️ Escribe el nombre'); return; }
+  if(compid){
+    const u=await api(`/api/subjects/${currentGradeId}/${subid}/competencias/${compid}`,'PUT',{name});
+    const s=subjects.find(s=>s.id===subid); if(s){ const c=s.competencias.find(c=>c.id===compid); if(c) c.name=u.name; }
+    showToast('✅ Competencia actualizada');
+  } else {
+    const c=await api(`/api/subjects/${currentGradeId}/${subid}/competencias`,'POST',{name});
+    const s=subjects.find(s=>s.id===subid); if(s) s.competencias.push(c);
+    showToast('✅ Competencia agregada');
+  }
+  closeModal('addCompModal'); refreshSubjectsUI();
+}
+
+/* ── CAPACIDADES CRUD ── */
+function openAddCap(subid,compid){ document.getElementById('capModalTitle').textContent='Nueva Capacidad'; document.getElementById('capName').value=''; document.getElementById('editCapSubjectId').value=subid; document.getElementById('editCapCompId').value=compid; document.getElementById('editCapId').value=''; openModal('addCapModal'); }
+function openEditCap(subid,compid,capid,name){ document.getElementById('capModalTitle').textContent='Editar Capacidad'; document.getElementById('capName').value=name; document.getElementById('editCapSubjectId').value=subid; document.getElementById('editCapCompId').value=compid; document.getElementById('editCapId').value=capid; openModal('addCapModal'); }
+async function saveCap(){
+  const name=document.getElementById('capName').value.trim(); const subid=document.getElementById('editCapSubjectId').value; const compid=document.getElementById('editCapCompId').value; const capid=document.getElementById('editCapId').value;
+  if(!name){ showToast('⚠️ Escribe el nombre'); return; }
+  if(capid){
+    const u=await api(`/api/subjects/${currentGradeId}/${subid}/competencias/${compid}/capacidades/${capid}`,'PUT',{name});
+    const s=subjects.find(s=>s.id===subid); if(s){ const c=s.competencias.find(c=>c.id===compid); if(c){ const cap=c.capacidades.find(cap=>cap.id===capid); if(cap) cap.name=u.name; } }
+    showToast('✅ Capacidad actualizada');
+  } else {
+    const cap=await api(`/api/subjects/${currentGradeId}/${subid}/competencias/${compid}/capacidades`,'POST',{name});
+    const s=subjects.find(s=>s.id===subid); if(s){ const c=s.competencias.find(c=>c.id===compid); if(c) c.capacidades.push(cap); }
+    showToast('✅ Capacidad agregada');
+  }
+  closeModal('addCapModal'); refreshSubjectsUI();
+}
+
+/* ── PERIODOS CRUD ── */
+function openAddPeriodo(){ editingPeriodoId=null; document.getElementById('periodoModalTitle').textContent='Nuevo Periodo'; document.getElementById('periodoName').value=''; document.getElementById('editPeriodoId').value=''; openModal('addPeriodoModal'); }
+function openEditPeriodo(id,name){ editingPeriodoId=id; document.getElementById('periodoModalTitle').textContent='Editar Periodo'; document.getElementById('periodoName').value=name; document.getElementById('editPeriodoId').value=id; openModal('addPeriodoModal'); }
+async function savePeriodo(){
+  const name=document.getElementById('periodoName').value.trim(); const pid=document.getElementById('editPeriodoId').value;
+  if(!name){ showToast('⚠️ Escribe el nombre'); return; }
+  if(pid){
+    const u=await api(`/api/periodos/${currentGradeId}/${pid}`,'PUT',{name});
+    const p=periodos.find(p=>p.id===pid); if(p) p.name=u.name;
+    showToast('✅ Periodo actualizado');
+  } else {
+    const p=await api(`/api/periodos/${currentGradeId}`,'POST',{name});
+    periodos.push(p); const g=getGrade(); if(g){if(!g.periodos)g.periodos=[];g.periodos.push(p);}
+    if(!currentPeriodoId) currentPeriodoId=p.id;
+    showToast('✅ Periodo agregado');
+  }
+  closeModal('addPeriodoModal'); refreshSubjectsUI();
+}
+
+function refreshSubjectsUI(){
+  const sl=document.getElementById('subjectsList'); if(sl) sl.innerHTML=renderSubjectsList();
+  const pl=document.getElementById('periodosList'); if(pl) pl.innerHTML=renderPeriodosList();
+}
+
+/* ── CONFIRM DELETE ── */
+let _delAction = null;
+function askConfirm(title, msg, detail, action){
+  document.getElementById('confirmTitle').textContent = title;
+  document.getElementById('confirmMsg').textContent = msg;
+  const det = document.getElementById('confirmDetail');
+  if(detail){ det.textContent = detail; det.style.display='block'; } else { det.style.display='none'; }
+  _delAction = action;
+  openModal('confirmModal');
+}
+async function confirmDelete(){
+  if(_delAction) await _delAction();
+  closeModal('confirmModal');
+}
+
+function askDeleteGrade(){
+  const g=getGrade(); if(!g) return;
+  askConfirm('¿Eliminar grado?',
+    `Se eliminará el grado "${g.name} — Sección ${g.section}" con todos sus alumnos, materias y notas.`,
+    '⚠️ Esta acción no se puede deshacer.',
+    async ()=>{
+      await api(`/api/grades/${currentGradeId}`,'DELETE');
+      grades = grades.filter(x=>x.id!==currentGradeId);
+      currentGradeId=null;
+      renderSidebar();
+      document.getElementById('mainContent').innerHTML=`<div class="empty-state">
+        <svg width="76" height="76" viewBox="0 0 76 76" fill="none"><rect x="10" y="8" width="56" height="60" rx="8" stroke="currentColor" stroke-width="2.5"/><path d="M22 26h32M22 36h24M22 46h20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        <h3>Selecciona un grado</h3><p>Elige un grado de la barra lateral</p></div>`;
+      showToast('🗑️ Grado eliminado');
+    });
+}
+
+function askDeleteStudent(sid, name){
+  askConfirm('¿Eliminar alumno?',
+    `Se eliminará a "${name}" de la lista y sus notas registradas.`,
+    '⚠️ Esta acción no se puede deshacer.',
+    async ()=>{
+      await api(`/api/grades/${currentGradeId}/students/${sid}`,'DELETE');
+      const g=getGrade(); g.students=g.students.filter(s=>s.id!==sid);
+      renderSidebar(); renderTab();
+      showToast('🗑️ Alumno eliminado');
+    });
+}
+
+function askDeleteSubject(subid, name){
+  askConfirm('¿Eliminar materia?',
+    `Se eliminará la materia "${name}" con todas sus competencias y capacidades.`,
+    '⚠️ Las notas registradas de esta materia también se perderán.',
+    async ()=>{
+      await api(`/api/subjects/${currentGradeId}/${subid}`,'DELETE');
+      subjects = subjects.filter(s=>s.id!==subid);
+      refreshSubjectsUI();
+      showToast('🗑️ Materia eliminada');
+    });
+}
+
+function askDeleteComp(subid, compid, name){
+  askConfirm('¿Eliminar competencia?',
+    `Se eliminará la competencia "${name}" y todas sus capacidades.`,
+    null,
+    async ()=>{
+      await api(`/api/subjects/${currentGradeId}/${subid}/competencias/${compid}`,'DELETE');
+      const s=subjects.find(s=>s.id===subid); if(s) s.competencias=s.competencias.filter(c=>c.id!==compid);
+      refreshSubjectsUI();
+      showToast('🗑️ Competencia eliminada');
+    });
+}
+
+function askDeleteCap(subid, compid, capid, name){
+  askConfirm('¿Eliminar capacidad?',
+    `Se eliminará la capacidad "${name}".`,
+    null,
+    async ()=>{
+      await api(`/api/subjects/${currentGradeId}/${subid}/competencias/${compid}/capacidades/${capid}`,'DELETE');
+      const s=subjects.find(s=>s.id===subid);
+      if(s){ const c=s.competencias.find(c=>c.id===compid); if(c) c.capacidades=c.capacidades.filter(cap=>cap.id!==capid); }
+      refreshSubjectsUI();
+      showToast('🗑️ Capacidad eliminada');
+    });
+}
+
+function askDeletePeriodo(pid, name){
+  askConfirm('¿Eliminar periodo?',
+    `Se eliminará el periodo "${name}".`,
+    '⚠️ Las notas guardadas en este periodo también se eliminarán.',
+    async ()=>{
+      await api(`/api/periodos/${currentGradeId}/${pid}`,'DELETE');
+      periodos=periodos.filter(p=>p.id!==pid);
+      const g=getGrade(); if(g) g.periodos=(g.periodos||[]).filter(p=>p.id!==pid);
+      if(currentPeriodoId===pid) currentPeriodoId=periodos.length?periodos[0].id:null;
+      refreshSubjectsUI();
+      showToast('🗑️ Periodo eliminado');
+    });
+}
+
+/* ── UTILS ── */
+function openModal(id){ document.getElementById(id).classList.add('open'); }
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{ if(e.target===o) o.classList.remove('open'); }));
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(o=>o.classList.remove('open')); });
+function showToast(msg){ const c=document.getElementById('toastContainer'),t=document.createElement('div'); t.className='toast'; t.textContent=msg; c.appendChild(t); setTimeout(()=>t.remove(),3000); }
+function esc(s){ return (s||'').replace(/'/g,"&#39;").replace(/"/g,'&quot;'); }
+
+/* ── INIT ── */
+loadGrades();
+</script>
+</body>
+</html>

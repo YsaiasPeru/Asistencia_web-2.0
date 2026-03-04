@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Iniciar Sesión — Sistema de Asistencia</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #eef2ff;
+    --surface: #ffffff;
+    --border: #dde3f0;
+    --text: #1a2035;
+    --text2: #4a5568;
+    --accent: #3b5bdb;
+    --accent2: #4c6ef5;
+    --error-bg: #fff5f5;
+    --error: #c53030;
+    --shadow: 0 8px 40px rgba(59,91,219,.14);
+  }
+  [data-theme="dark"] {
+    --bg: #0e1117;
+    --surface: #161b27;
+    --border: #2d3748;
+    --text: #e8eaf0;
+    --text2: #8892a4;
+    --accent: #5c7cfa;
+    --accent2: #748ffc;
+    --error-bg: #2d1515;
+    --error: #fc8181;
+    --shadow: 0 8px 40px rgba(0,0,0,.4);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Outfit', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .3s;
+  }
+
+  /* Background pattern */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: radial-gradient(ellipse at 20% 50%, rgba(59,91,219,.08) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 20%, rgba(92,124,250,.06) 0%, transparent 50%);
+    pointer-events: none;
+  }
+
+  .login-wrap {
+    width: 420px;
+    max-width: 95vw;
+    position: relative;
+    z-index: 1;
+  }
+
+  .login-logo {
+    text-align: center;
+    margin-bottom: 28px;
+  }
+  .login-logo-icon {
+    width: 64px; height: 64px;
+    background: linear-gradient(135deg, #3b5bdb, #5c7cfa);
+    border-radius: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 14px;
+    box-shadow: 0 8px 24px rgba(59,91,219,.3);
+  }
+  .login-logo h1 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -.3px;
+  }
+  .login-logo p {
+    font-size: .85rem;
+    color: var(--text2);
+    margin-top: 3px;
+  }
+
+  .login-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px 36px 28px;
+    box-shadow: var(--shadow);
+  }
+
+  .form-group { margin-bottom: 18px; }
+  .form-label {
+    display: block;
+    font-size: .78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .9px;
+    color: var(--text2);
+    margin-bottom: 7px;
+  }
+  .input-wrap { position: relative; }
+  .form-input {
+    width: 100%;
+    padding: 11px 14px 11px 42px;
+    border: 1.5px solid var(--border);
+    border-radius: 11px;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-size: .95rem;
+    transition: border-color .2s, box-shadow .2s;
+  }
+  .form-input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(59,91,219,.12);
+  }
+  .input-icon {
+    position: absolute;
+    left: 13px; top: 50%;
+    transform: translateY(-50%);
+    font-size: 1rem;
+    pointer-events: none;
+    opacity: .55;
+  }
+  .toggle-pw {
+    position: absolute;
+    right: 13px; top: 50%;
+    transform: translateY(-50%);
+    background: none; border: none;
+    cursor: pointer; font-size: .9rem; opacity: .5;
+    transition: opacity .2s;
+  }
+  .toggle-pw:hover { opacity: .9; }
+
+  .error-box {
+    background: var(--error-bg);
+    color: var(--error);
+    border: 1px solid var(--error);
+    border-radius: 10px;
+    padding: 10px 14px;
+    font-size: .84rem;
+    font-weight: 500;
+    margin-bottom: 16px;
+    display: none;
+    align-items: center;
+    gap: 8px;
+  }
+  .error-box.show { display: flex; }
+
+  .btn-login {
+    width: 100%;
+    padding: 13px;
+    background: linear-gradient(135deg, #3b5bdb, #5c7cfa);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-family: 'Outfit', sans-serif;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all .2s;
+    box-shadow: 0 4px 14px rgba(59,91,219,.3);
+    letter-spacing: .2px;
+    margin-top: 4px;
+  }
+  .btn-login:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(59,91,219,.38);
+  }
+  .btn-login:active { transform: translateY(0); }
+  .btn-login:disabled { opacity: .65; cursor: not-allowed; transform: none; }
+
+  .login-footer {
+    text-align: center;
+    margin-top: 20px;
+    font-size: .78rem;
+    color: var(--text2);
+  }
+
+  .theme-btn {
+    position: fixed;
+    top: 18px; right: 20px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 50px;
+    padding: 6px 14px;
+    cursor: pointer;
+    font-size: .8rem;
+    font-family: 'Outfit', sans-serif;
+    font-weight: 500;
+    color: var(--text2);
+    display: flex; align-items: center; gap: 6px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    transition: all .2s; z-index: 10;
+  }
+  .theme-btn:hover { background: var(--border); }
+
+  .spinner {
+    display: inline-block;
+    width: 16px; height: 16px;
+    border: 2px solid rgba(255,255,255,.3);
+    border-top-color: white;
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .fade-in { animation: fadeIn .4s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+
+<button class="theme-btn" onclick="toggleTheme()">
+  <span id="themeIcon">🌙</span>
+  <span id="themeLabel">Oscuro</span>
+</button>
+
+<div class="login-wrap fade-in">
+  <div class="login-logo">
+    <div class="login-logo-icon">
+      <svg width="32" height="32" viewBox="0 0 32 32" fill="none">
+        <path d="M6 10h20M6 15h14M6 20h16" stroke="white" stroke-width="2.2" stroke-linecap="round"/>
+        <circle cx="24" cy="22" r="6" fill="rgba(255,255,255,0.2)" stroke="white" stroke-width="1.5"/>
+        <path d="M21.5 22l1.5 1.8 3-3" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h1>Sistema de Asistencia y Notas</h1>
+    <p>Inicia sesión para continuar</p>
+  </div>
+
+  <div class="login-card">
+    <div class="error-box" id="errorBox">
+      <span>⚠️</span>
+      <span id="errorMsg">Usuario o contraseña incorrectos</span>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Usuario</label>
+      <div class="input-wrap">
+        <span class="input-icon">👤</span>
+        <input type="text" class="form-input" id="username"
+               placeholder="Ingresa tu usuario"
+               autocomplete="username"
+               onkeydown="if(event.key==='Enter') doLogin()">
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Contraseña</label>
+      <div class="input-wrap">
+        <span class="input-icon">🔒</span>
+        <input type="password" class="form-input" id="password"
+               placeholder="Ingresa tu contraseña"
+               autocomplete="current-password"
+               onkeydown="if(event.key==='Enter') doLogin()">
+        <button class="toggle-pw" onclick="togglePw()" id="togglePwBtn" title="Mostrar contraseña">👁️</button>
+      </div>
+    </div>
+
+    <button class="btn-login" id="loginBtn" onclick="doLogin()">
+      Iniciar Sesión
+    </button>
+
+    <div class="login-footer">
+      Sistema de Gestión Escolar
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleTheme(){
+    const html=document.documentElement, dark=html.getAttribute('data-theme')==='dark';
+    html.setAttribute('data-theme', dark?'light':'dark');
+    document.getElementById('themeIcon').textContent=dark?'🌙':'☀️';
+    document.getElementById('themeLabel').textContent=dark?'Oscuro':'Claro';
+    localStorage.setItem('theme', dark?'light':'dark');
+  }
+  (()=>{
+    const s=localStorage.getItem('theme')||'light';
+    document.documentElement.setAttribute('data-theme',s);
+    if(s==='dark'){document.getElementById('themeIcon').textContent='☀️';document.getElementById('themeLabel').textContent='Claro';}
+  })();
+
+  let pwVisible = false;
+  function togglePw(){
+    const inp=document.getElementById('password');
+    pwVisible=!pwVisible;
+    inp.type=pwVisible?'text':'password';
+    document.getElementById('togglePwBtn').textContent=pwVisible?'🙈':'👁️';
+  }
+
+  async function doLogin(){
+    const username=document.getElementById('username').value.trim();
+    const password=document.getElementById('password').value;
+    const btn=document.getElementById('loginBtn');
+    const errBox=document.getElementById('errorBox');
+
+    if(!username||!password){
+      showError('Por favor completa todos los campos.');
+      return;
+    }
+
+    errBox.classList.remove('show');
+    btn.disabled=true;
+    btn.innerHTML='<span class="spinner"></span> Ingresando...';
+
+    try {
+      const r=await fetch('/api/login',{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({username, password})
+      });
+      const data=await r.json();
+      if(r.ok){
+        btn.innerHTML='✅ Bienvenido, redirigiendo...';
+        setTimeout(()=>{ window.location.href='/'; }, 500);
+      } else {
+        showError(data.error || 'Credenciales incorrectas.');
+        btn.disabled=false;
+        btn.innerHTML='Iniciar Sesión';
+      }
+    } catch(e) {
+      showError('Error de conexión. Intenta de nuevo.');
+      btn.disabled=false;
+      btn.innerHTML='Iniciar Sesión';
+    }
+  }
+
+  function showError(msg){
+    const box=document.getElementById('errorBox');
+    document.getElementById('errorMsg').textContent=msg;
+    box.classList.add('show');
+  }
+
+  // Focus username on load
+  document.getElementById('username').focus();
+</script>
+</body>
+</html>

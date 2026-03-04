@@ -1,0 +1,485 @@
+{
+  "grades": [
+    {
+      "id": "1_828383",
+      "name": "2° SECNDARIA",
+      "section": "C",
+      "teacher": "YSAIAS GODOY",
+      "students": [
+        {
+          "id": "campos_silva,_jared_josue_97885502",
+          "name": "CAMPOS SILVA, JARED JOSUE"
+        },
+        {
+          "id": "chunga_crisanto,_nicol_catalina_97885502",
+          "name": "CHUNGA CRISANTO, Nicol Catalina"
+        },
+        {
+          "id": "cornejo_lacherre,_valentina_noemi_97885502",
+          "name": "CORNEJO LACHERRE, VALENTINA NOEMI"
+        },
+        {
+          "id": "corzo_rumiche,_sebastian_david_97885502",
+          "name": "CORZO RUMICHE, SEBASTIAN DAVID"
+        },
+        {
+          "id": "delgado_laban,_dayra_abigail_97885502",
+          "name": "DELGADO LABAN, Dayra Abigail"
+        },
+        {
+          "id": "estefania_alzamora,_mia_rafaela_97885502",
+          "name": "ESTEFANIA ALZAMORA, MIA RAFAELA"
+        },
+        {
+          "id": "farfan_lujan,_julio_emilio_rasek_97885502",
+          "name": "FARFAN LUJAN, Julio Emilio Rasek"
+        },
+        {
+          "id": "flores_castillo,_daniela_fernanda_97885502",
+          "name": "FLORES CASTILLO, Daniela Fernanda"
+        },
+        {
+          "id": "garcia_abarca,_adan_franklyn_nicolas_97885502",
+          "name": "GARCIA ABARCA, Adan Franklyn Nicolas"
+        },
+        {
+          "id": "gutierrez_hualpa,_marcela_lizeth_97885502",
+          "name": "GUTIERREZ HUALPA, Marcela Lizeth"
+        },
+        {
+          "id": "gutierrez_torres,_maria_fernanda_97885502",
+          "name": "GUTIERREZ TORRES, Maria Fernanda"
+        },
+        {
+          "id": "jacinto_malqui,_carlos_rodrigo_97885502",
+          "name": "JACINTO MALQUI, Carlos Rodrigo"
+        },
+        {
+          "id": "melgar_castro,_santiago_jose_97885502",
+          "name": "MELGAR CASTRO, Santiago Jose"
+        },
+        {
+          "id": "namuche_zeta,_emilia_lissette_97885502",
+          "name": "NAMUCHE ZETA, Emilia Lissette"
+        },
+        {
+          "id": "ortega_bran,_mia_isabella_97885502",
+          "name": "ORTEGA BRAN, MIA ISABELLA"
+        },
+        {
+          "id": "oyola_andrade,_daniella_nathaniel_97885502",
+          "name": "OYOLA ANDRADE, Daniella Nathaniel"
+        },
+        {
+          "id": "quevedo_burga,_jim_emmanuel_97885502",
+          "name": "QUEVEDO BURGA, JIM EMMANUEL"
+        },
+        {
+          "id": "ramirez_fiestas,_grace_daphne_97885502",
+          "name": "RAMIREZ FIESTAS, GRACE DAPHNE"
+        },
+        {
+          "id": "ramirez_lozada,_brisa_nicole_97885502",
+          "name": "RAMIREZ LOZADA, Brisa Nicole"
+        },
+        {
+          "id": "ramirez_valderrama,_gabriela_silvana_97885502",
+          "name": "RAMIREZ VALDERRAMA, Gabriela Silvana"
+        },
+        {
+          "id": "sanchez_jimenez,_albert_steven_97885502",
+          "name": "SANCHEZ JIMENEZ, Albert Steven"
+        },
+        {
+          "id": "sandoval_guzman,_leandro_alexandro_97885502",
+          "name": "SANDOVAL GUZMAN, Leandro Alexandro"
+        },
+        {
+          "id": "sandoval_muñoz,_marcela_valentina_97885502",
+          "name": "SANDOVAL MUÑOZ, MARCELA VALENTINA"
+        },
+        {
+          "id": "seminario_fernández,_adriel_munir_97885502",
+          "name": "SEMINARIO FERNÁNDEZ, Adriel Munir"
+        },
+        {
+          "id": "silva_pacherres,_sthefano_mariano_97885502",
+          "name": "SILVA PACHERRES, Sthefano Mariano"
+        },
+        {
+          "id": "valdiviezo_fossa,_guillermo_andrés_97885502",
+          "name": "VALDIVIEZO FOSSA, GUILLERMO ANDRÉS"
+        },
+        {
+          "id": "valencia_chumacero,_mia_graciella_zharick_97885502",
+          "name": "VALENCIA CHUMACERO, Mia Graciella Zharick"
+        },
+        {
+          "id": "vivas_garcia,_magda_noelia_97885502",
+          "name": "VIVAS GARCIA, MAGDA NOELIA"
+        },
+        {
+          "id": "yeng_seminario,_ariana_solange_97885502",
+          "name": "YENG SEMINARIO, Ariana Solange"
+        }
+      ],
+      "periodos": []
+    },
+    {
+      "id": "2_834685",
+      "name": "1° SECNDARIA",
+      "section": "C",
+      "teacher": "YSAIAS GODOY",
+      "students": [
+        {
+          "id": "alatrista_guerra,_matías_rafael_75949208",
+          "name": "ALATRISTA GUERRA, Matías Rafael"
+        },
+        {
+          "id": "arrieta_mejía,_matías_gabriel_75949208",
+          "name": "ARRIETA MEJÍA, Matías Gabriel"
+        },
+        {
+          "id": "calle_castillo,_santiago_alonso_75949208",
+          "name": "CALLE CASTILLO, Santiago Alonso"
+        },
+        {
+          "id": "calle_palacios,_ariana_ximena_75949208",
+          "name": "CALLE PALACIOS, Ariana Ximena"
+        },
+        {
+          "id": "carhuapoma_estrada,_victoria_nicole_75949208",
+          "name": "CARHUAPOMA ESTRADA, Victoria Nicole"
+        },
+        {
+          "id": "cordova_purizaca,_marita_valentina_75949208",
+          "name": "CORDOVA PURIZACA, Marita Valentina"
+        },
+        {
+          "id": "coronado_rojas,_camila_juliet_75949208",
+          "name": "CORONADO ROJAS, Camila Juliet"
+        },
+        {
+          "id": "cruz_cueto,_alizee_rafaella_75949208",
+          "name": "CRUZ CUETO, Alizee Rafaella"
+        },
+        {
+          "id": "culquicondor_olaya,_lucia_elizabeth_75949208",
+          "name": "CULQUICONDOR OLAYA, Lucia Elizabeth"
+        },
+        {
+          "id": "delgado_sanjinez,_matheo_aldahir_75949208",
+          "name": "DELGADO SANJINEZ, Matheo Aldahir"
+        },
+        {
+          "id": "ecca_valdez,_jarib_alexander_75949208",
+          "name": "ECCA VALDEZ, Jarib Alexander"
+        },
+        {
+          "id": "ecca_valdez,_joao_antonio_75949208",
+          "name": "ECCA VALDEZ, Joao Antonio"
+        },
+        {
+          "id": "espinoza_cubas,_lucianna_sofia_75949208",
+          "name": "ESPINOZA CUBAS, Lucianna Sofia"
+        },
+        {
+          "id": "fernandez_seclen,_xiara_valeria_75949208",
+          "name": "FERNANDEZ SECLEN, Xiara Valeria"
+        },
+        {
+          "id": "frias_vilchez,_jairo_rodrigo_75949208",
+          "name": "FRIAS VILCHEZ, Jairo Rodrigo"
+        },
+        {
+          "id": "garcia_miranda,_layra_fernanda_75949208",
+          "name": "GARCIA MIRANDA, Layra Fernanda"
+        },
+        {
+          "id": "neira_garcia_urrutia,_lohana_fernanda_75949208",
+          "name": "NEIRA GARCIA URRUTIA, Lohana Fernanda"
+        },
+        {
+          "id": "nizama_raymundo,_marcos_adrian_75949208",
+          "name": "NIZAMA RAYMUNDO, Marcos Adrian"
+        },
+        {
+          "id": "ordinola_timana,_brunella_alexandra_75949208",
+          "name": "ORDINOLA TIMANA, Brunella Alexandra"
+        },
+        {
+          "id": "perez_benavides,_santiago_75949208",
+          "name": "PEREZ BENAVIDES, Santiago"
+        },
+        {
+          "id": "rosell_campoverde,_sáshenka_ekaterina_75949208",
+          "name": "ROSELL CAMPOVERDE, Sáshenka Ekaterina"
+        },
+        {
+          "id": "saavedra_lamadrid,_francesco_nijail_75949208",
+          "name": "SAAVEDRA LAMADRID, Francesco Nijail"
+        },
+        {
+          "id": "sanchez_lozada,_fernando_sebastian_75949208",
+          "name": "SANCHEZ LOZADA, Fernando Sebastian"
+        },
+        {
+          "id": "severiche_palacios,_esteban_hernando_75949208",
+          "name": "SEVERICHE PALACIOS, Esteban Hernando"
+        },
+        {
+          "id": "sotero_reto,_ana_sophia_75949208",
+          "name": "SOTERO RETO, Ana Sophia"
+        },
+        {
+          "id": "sullon_cherres,_anhel_naiara_75949208",
+          "name": "SULLON CHERRES, Anhel Naiara"
+        },
+        {
+          "id": "zeña_palacios,_luziana_valenthina_75949208",
+          "name": "ZEÑA PALACIOS, Luziana Valenthina"
+        },
+        {
+          "id": "zurita_calle,_romina_ariana_75949208",
+          "name": "ZURITA CALLE, Romina Ariana"
+        }
+      ]
+    },
+    {
+      "id": "3_647071",
+      "name": "6° PRIMARIA",
+      "section": "C",
+      "teacher": "YSAIAS GODOY",
+      "students": [
+        {
+          "id": "aliaga_cunyarache,_arella_cristina_36541458",
+          "name": "ALIAGA CUNYARACHE, Arella Cristina"
+        },
+        {
+          "id": "ancajima_lalangui,_evan_uriel_36541458",
+          "name": "ANCAJIMA LALANGUI, Evan Uriel"
+        },
+        {
+          "id": "bustincio_benites,_mario_leonardo_36541458",
+          "name": "BUSTINCIO BENITES, Mario Leonardo"
+        },
+        {
+          "id": "calle_calle,_esnaider_moises_36541458",
+          "name": "CALLE CALLE, Esnaider Moises"
+        },
+        {
+          "id": "crespo_mogollon,_luciana_gabriela_36541458",
+          "name": "CRESPO MOGOLLON, Luciana Gabriela"
+        },
+        {
+          "id": "garcia_caro,_abigail_lourdes_36541458",
+          "name": "GARCIA CARO, Abigail Lourdes"
+        },
+        {
+          "id": "landacay_reyes,_aarón_ignacio_36541458",
+          "name": "LANDACAY REYES, Aarón Ignacio"
+        },
+        {
+          "id": "lima_benites,_edgar_ramon_36541458",
+          "name": "LIMA BENITES, EDGAR RAMON"
+        },
+        {
+          "id": "mijahuanga_andrade,_alba_sophia_36541458",
+          "name": "MIJAHUANGA ANDRADE, Alba Sophia"
+        },
+        {
+          "id": "mondragon_mejia,_miguel_fernando_36541458",
+          "name": "MONDRAGON MEJIA, Miguel Fernando"
+        },
+        {
+          "id": "oliva_cueva,_luciano_antonio_36541458",
+          "name": "OLIVA CUEVA, Luciano Antonio"
+        },
+        {
+          "id": "otoya_nole,_luciano_daniel_36541458",
+          "name": "OTOYA NOLE, Luciano Daniel"
+        },
+        {
+          "id": "pacherres_lozada,_elizabeth_sofia_36541458",
+          "name": "PACHERRES LOZADA, Elizabeth Sofia"
+        },
+        {
+          "id": "quevedo_burga,_emily_36541458",
+          "name": "QUEVEDO BURGA, Emily"
+        },
+        {
+          "id": "quezada_pulache,_alanna_guadalupe_36541458",
+          "name": "QUEZADA PULACHE, Alanna Guadalupe"
+        },
+        {
+          "id": "ramirez_valderrama,_luiz_emiliano_roboan_36541458",
+          "name": "RAMIREZ VALDERRAMA, Luiz Emiliano Roboan"
+        },
+        {
+          "id": "requena_yovera,_ghia_anthuanette_36541458",
+          "name": "REQUENA YOVERA, Ghia Anthuanette"
+        },
+        {
+          "id": "rodriguez_agurto,_patrick_sebasthian_36541458",
+          "name": "RODRIGUEZ AGURTO, Patrick Sebasthian"
+        },
+        {
+          "id": "saavedra_burneo,_stephano_luciano_ernesto_36541458",
+          "name": "SAAVEDRA BURNEO, STEPHANO LUCIANO ERNESTO"
+        },
+        {
+          "id": "tong_hernandez,_mario_martin_36541458",
+          "name": "TONG HERNANDEZ, Mario Martin"
+        },
+        {
+          "id": "tongombol_silva,_mia_fernanda_36541458",
+          "name": "TONGOMBOL SILVA, Mia Fernanda"
+        },
+        {
+          "id": "torres_mendoza,_danamaría_isabel_36541458",
+          "name": "TORRES MENDOZA, Danamaría Isabel"
+        },
+        {
+          "id": "velasco_vivar,_omar_gonzalo_36541458",
+          "name": "VELASCO VIVAR, Omar Gonzalo"
+        },
+        {
+          "id": "zapata_chang,_shaiming_janalee_36541458",
+          "name": "ZAPATA CHANG, Shaiming Janalee"
+        },
+        {
+          "id": "zapata_ramírez,_jacob_leonardo_36541458",
+          "name": "ZAPATA RAMÍREZ, Jacob Leonardo"
+        }
+      ]
+    }
+  ],
+  "attendance": {
+    "2026-03-03": {
+      "1_828383": {
+        "campos_silva,_jared_josue_97885502": true,
+        "chunga_crisanto,_nicol_catalina_97885502": true,
+        "cornejo_lacherre,_valentina_noemi_97885502": true,
+        "corzo_rumiche,_sebastian_david_97885502": true,
+        "delgado_laban,_dayra_abigail_97885502": true,
+        "estefania_alzamora,_mia_rafaela_97885502": true,
+        "farfan_lujan,_julio_emilio_rasek_97885502": true,
+        "flores_castillo,_daniela_fernanda_97885502": true,
+        "garcia_abarca,_adan_franklyn_nicolas_97885502": true,
+        "gutierrez_hualpa,_marcela_lizeth_97885502": true,
+        "gutierrez_torres,_maria_fernanda_97885502": true,
+        "jacinto_malqui,_carlos_rodrigo_97885502": true,
+        "melgar_castro,_santiago_jose_97885502": true,
+        "namuche_zeta,_emilia_lissette_97885502": true,
+        "ortega_bran,_mia_isabella_97885502": true,
+        "oyola_andrade,_daniella_nathaniel_97885502": true,
+        "quevedo_burga,_jim_emmanuel_97885502": true,
+        "ramirez_fiestas,_grace_daphne_97885502": true,
+        "ramirez_lozada,_brisa_nicole_97885502": true,
+        "ramirez_valderrama,_gabriela_silvana_97885502": true,
+        "sanchez_jimenez,_albert_steven_97885502": true,
+        "sandoval_guzman,_leandro_alexandro_97885502": true,
+        "sandoval_muñoz,_marcela_valentina_97885502": true,
+        "seminario_fernández,_adriel_munir_97885502": true,
+        "silva_pacherres,_sthefano_mariano_97885502": true,
+        "valdiviezo_fossa,_guillermo_andrés_97885502": true,
+        "valencia_chumacero,_mia_graciella_zharick_97885502": true,
+        "vivas_garcia,_magda_noelia_97885502": true,
+        "yeng_seminario,_ariana_solange_97885502": true
+      },
+      "2_834685": {
+        "alatrista_guerra,_matías_rafael_75949208": true,
+        "arrieta_mejía,_matías_gabriel_75949208": true,
+        "calle_castillo,_santiago_alonso_75949208": true,
+        "calle_palacios,_ariana_ximena_75949208": true,
+        "carhuapoma_estrada,_victoria_nicole_75949208": true,
+        "cordova_purizaca,_marita_valentina_75949208": true,
+        "coronado_rojas,_camila_juliet_75949208": true,
+        "cruz_cueto,_alizee_rafaella_75949208": true,
+        "culquicondor_olaya,_lucia_elizabeth_75949208": true,
+        "delgado_sanjinez,_matheo_aldahir_75949208": true,
+        "ecca_valdez,_jarib_alexander_75949208": true,
+        "ecca_valdez,_joao_antonio_75949208": true,
+        "espinoza_cubas,_lucianna_sofia_75949208": true,
+        "fernandez_seclen,_xiara_valeria_75949208": true,
+        "frias_vilchez,_jairo_rodrigo_75949208": true,
+        "garcia_miranda,_layra_fernanda_75949208": true,
+        "neira_garcia_urrutia,_lohana_fernanda_75949208": true,
+        "nizama_raymundo,_marcos_adrian_75949208": true,
+        "ordinola_timana,_brunella_alexandra_75949208": true,
+        "perez_benavides,_santiago_75949208": true,
+        "rosell_campoverde,_sáshenka_ekaterina_75949208": true,
+        "saavedra_lamadrid,_francesco_nijail_75949208": true,
+        "sanchez_lozada,_fernando_sebastian_75949208": true,
+        "severiche_palacios,_esteban_hernando_75949208": true,
+        "sotero_reto,_ana_sophia_75949208": true,
+        "sullon_cherres,_anhel_naiara_75949208": true,
+        "zeña_palacios,_luziana_valenthina_75949208": true,
+        "zurita_calle,_romina_ariana_75949208": true
+      },
+      "3_647071": {
+        "aliaga_cunyarache,_arella_cristina_36541458": true,
+        "ancajima_lalangui,_evan_uriel_36541458": true,
+        "bustincio_benites,_mario_leonardo_36541458": true,
+        "calle_calle,_esnaider_moises_36541458": true,
+        "crespo_mogollon,_luciana_gabriela_36541458": true,
+        "garcia_caro,_abigail_lourdes_36541458": true,
+        "landacay_reyes,_aarón_ignacio_36541458": true,
+        "lima_benites,_edgar_ramon_36541458": true,
+        "mijahuanga_andrade,_alba_sophia_36541458": true,
+        "mondragon_mejia,_miguel_fernando_36541458": true,
+        "oliva_cueva,_luciano_antonio_36541458": true,
+        "otoya_nole,_luciano_daniel_36541458": true,
+        "pacherres_lozada,_elizabeth_sofia_36541458": true,
+        "quevedo_burga,_emily_36541458": true,
+        "quezada_pulache,_alanna_guadalupe_36541458": true,
+        "ramirez_valderrama,_luiz_emiliano_roboan_36541458": true,
+        "requena_yovera,_ghia_anthuanette_36541458": true,
+        "rodriguez_agurto,_patrick_sebasthian_36541458": true,
+        "saavedra_burneo,_stephano_luciano_ernesto_36541458": true,
+        "tong_hernandez,_mario_martin_36541458": true,
+        "tongombol_silva,_mia_fernanda_36541458": true,
+        "torres_mendoza,_danamaría_isabel_36541458": true,
+        "velasco_vivar,_omar_gonzalo_36541458": true,
+        "zapata_chang,_shaiming_janalee_36541458": true,
+        "zapata_ramírez,_jacob_leonardo_36541458": true
+      }
+    },
+    "2026-03-04": {
+      "2_834685": {
+        "alatrista_guerra,_matías_rafael_75949208": true,
+        "arrieta_mejía,_matías_gabriel_75949208": true,
+        "calle_castillo,_santiago_alonso_75949208": true,
+        "calle_palacios,_ariana_ximena_75949208": true,
+        "carhuapoma_estrada,_victoria_nicole_75949208": true,
+        "cordova_purizaca,_marita_valentina_75949208": true,
+        "coronado_rojas,_camila_juliet_75949208": true,
+        "cruz_cueto,_alizee_rafaella_75949208": true,
+        "culquicondor_olaya,_lucia_elizabeth_75949208": true,
+        "delgado_sanjinez,_matheo_aldahir_75949208": true,
+        "ecca_valdez,_jarib_alexander_75949208": true,
+        "ecca_valdez,_joao_antonio_75949208": true,
+        "espinoza_cubas,_lucianna_sofia_75949208": true,
+        "fernandez_seclen,_xiara_valeria_75949208": true,
+        "frias_vilchez,_jairo_rodrigo_75949208": true,
+        "garcia_miranda,_layra_fernanda_75949208": true,
+        "neira_garcia_urrutia,_lohana_fernanda_75949208": true,
+        "nizama_raymundo,_marcos_adrian_75949208": true,
+        "ordinola_timana,_brunella_alexandra_75949208": true,
+        "perez_benavides,_santiago_75949208": true,
+        "rosell_campoverde,_sáshenka_ekaterina_75949208": true,
+        "saavedra_lamadrid,_francesco_nijail_75949208": true,
+        "sanchez_lozada,_fernando_sebastian_75949208": true,
+        "severiche_palacios,_esteban_hernando_75949208": true,
+        "sotero_reto,_ana_sophia_75949208": true,
+        "sullon_cherres,_anhel_naiara_75949208": true,
+        "zeña_palacios,_luziana_valenthina_75949208": true,
+        "zurita_calle,_romina_ariana_75949208": true
+      }
+    }
+  },
+  "notes": {},
+  "subjects": {
+    "1_828383": []
+  }
+}
